@@ -64,7 +64,7 @@ func main() {
 			}
 		} else if oldMsg == "/edit item" {
 			match := i.CheckItem(txt)
-			if match > 0 {
+			if match {
 				tag = "edit"
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("What do you want to change \"%s\" to?", txt))
 			} else {
@@ -72,8 +72,8 @@ func main() {
 			}
 		} else if len(oldMsg) > 5 && oldMsg[:4] == "edit" {
 			tag = ""
-			res := i.EditItem(oldMsg[4:], txt)
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Item \"%s\" has been changed to \"%s\". %s", oldMsg[4:], txt, res))
+			i.EditItem(oldMsg[4:], txt)
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Item \"%s\" has been changed to \"%s\".", oldMsg[4:], txt))
 		} else {
 			cmds := i.CheckCommand(txt)
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
