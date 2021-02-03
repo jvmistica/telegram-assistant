@@ -60,8 +60,10 @@ func TestCheckCommand(t *testing.T) {
 
 	i := Items{db: DB}
 	for _, test := range tests {
-		result := i.CheckCommand(test.cmd)
-		assert.Contains(t, result, test.expected)
+		res, err := i.CheckCommand(test.cmd)
+
+		assert.Nil(t, err)
+		assert.Contains(t, res, test.expected)
 	}
 }
 
@@ -133,8 +135,10 @@ func TestAddItem(t *testing.T) {
 
 	i := Items{db: DB}
 	mocket.Catcher.Reset().NewMock().WithReply(nil)
-	res := i.AddItem("chocolate")
-	assert.Nil(t, res)
+	res, err := i.AddItem("chocolate")
+
+	assert.Nil(t, err)
+	assert.Equal(t, "Added \"chocolate\" to the inventory.\n\nAdd more details about this item using the commands below:\n/add item description chocolate <description>\n/add item amount chocolate <amount>\n/add item category chocolate <category>\n/add item price chocolate <price>\n/add item expiration chocolate <expiration>\n", res)
 }
 
 // TODO: Improve this function/test

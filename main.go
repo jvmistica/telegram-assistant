@@ -50,18 +50,14 @@ func main() {
 
 		txt = update.Message.Text
 		if oldMsg == "/add item" {
-			err := i.AddItem(txt)
+			res, err := i.AddItem(txt)
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
 			}
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Added \"%s\" to the inventory.", txt))
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 		} else if oldMsg == "/delete item" {
-			rows := i.DeleteItem(txt)
-			if rows > 0 {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Removed \"%s\" from the inventory.", txt))
-			} else {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Item \"%s\" does not exist in the inventory.", txt))
-			}
+			res := i.DeleteItem(txt)
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 		} else if oldMsg == "/edit item" {
 			match := i.CheckItem(txt)
 			if match {
@@ -75,7 +71,10 @@ func main() {
 			i.EditItem(oldMsg[4:], txt)
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Item \"%s\" has been changed to \"%s\".", oldMsg[4:], txt))
 		} else {
-			cmds := i.CheckCommand(txt)
+			cmds, err := i.CheckCommand(txt)
+			if err != nil {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
+			}
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
 		}
 
