@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
+	"strings"
 )
 
 type Items struct {
@@ -62,14 +63,14 @@ func main() {
 			match := i.CheckItem(txt)
 			if match {
 				tag = "edit"
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("What do you want to change \"%s\" to?", txt))
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, strings.ReplaceAll(editPrompt, "<item>", txt))
 			} else {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Item \"%s\" does not exist in the inventory.", txt))
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, strings.ReplaceAll(itemNotExist, "<item>", txt))
 			}
 		} else if len(oldMsg) > 5 && oldMsg[:4] == "edit" {
 			tag = ""
 			i.EditItem(oldMsg[4:], txt)
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Item \"%s\" has been changed to \"%s\".", oldMsg[4:], txt))
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, strings.ReplaceAll(strings.ReplaceAll(editSuccess, "<oldItem>", oldMsg[4:]), "<newItem>", txt))
 		} else {
 			cmds, err := i.CheckCommand(txt)
 			if err != nil {
