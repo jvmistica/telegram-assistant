@@ -7,7 +7,6 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
-	"strings"
 )
 
 type Items struct {
@@ -39,7 +38,7 @@ func main() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
-	var oldMsg, txt, tag string
+	var oldMsg, txt string
 	var msg tgbotapi.MessageConfig
 	updates, err := bot.GetUpdatesChan(u)
 	i := NewItems(db)
@@ -51,29 +50,14 @@ func main() {
 
 		txt = update.Message.Text
 		if oldMsg == "/add item" {
-			res, err := i.AddItem(txt)
+			res, err := i.AddItem([]string{txt})
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
 			}
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 		} else if oldMsg == "/delete item" {
-			res := i.DeleteItem(txt)
+			res := i.DeleteItem([]string{txt})
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
-		} else if oldMsg == "/edit item" {
-			match := i.CheckItem(txt)
-			if match {
-				tag = "edit"
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, strings.ReplaceAll(editPrompt, "<item>", txt))
-			} else {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, strings.ReplaceAll(itemNotExist, "<item>", txt))
-			}
-		} else if len(oldMsg) > 5 && oldMsg[:4] == "edit" {
-			tag = ""
-			err := i.EditItem("name", oldMsg[4:], txt)
-			if err != nil {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
-			}
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, strings.ReplaceAll(strings.ReplaceAll(editSuccess, "<oldItem>", oldMsg[4:]), "<newItem>", txt))
 		} else {
 			cmds, err := i.CheckCommand(txt)
 			if err != nil {
@@ -82,7 +66,7 @@ func main() {
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
 		}
 
-		oldMsg = tag + txt
+		oldMsg = txt
 		bot.Send(msg)
 	}
 }
