@@ -124,7 +124,7 @@ func TestListItems(t *testing.T) {
 	i := Items{db: DB}
 	for _, test := range tests {
 		mocket.Catcher.Reset().NewMock().WithReply(test.sqlResp)
-		res := i.ListItems()
+		res := i.ListItems("")
 		assert.Equal(t, test.expected, res)
 	}
 }
@@ -146,7 +146,7 @@ func TestEditItem(t *testing.T) {
 	SetupTests()
 
 	i := Items{db: DB}
-	i.EditItem("chocolate", "milk chocolate")
+	i.EditItem("name", "chocolate", "milk chocolate")
 }
 
 // TODO: Improve this function/test

@@ -69,7 +69,10 @@ func main() {
 			}
 		} else if len(oldMsg) > 5 && oldMsg[:4] == "edit" {
 			tag = ""
-			i.EditItem(oldMsg[4:], txt)
+			err := i.EditItem("name", oldMsg[4:], txt)
+			if err != nil {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
+			}
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, strings.ReplaceAll(strings.ReplaceAll(editSuccess, "<oldItem>", oldMsg[4:]), "<newItem>", txt))
 		} else {
 			cmds, err := i.CheckCommand(txt)

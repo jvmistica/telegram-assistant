@@ -1,16 +1,14 @@
 package main
 
-import (
-	"strings"
-)
+import "strings"
 
 // CheckCommand checks if the command is valid and returns the appropriate response
 func (i *Items) CheckCommand(cmd string) (string, error) {
 	var msg string
-	var params string
+	var params []string
 
 	if len(strings.Split(cmd, " ")) > 2 {
-		params = strings.Join(strings.Split(cmd, " ")[2:], " ")
+		params = strings.Split(cmd, " ")[2:]
 		cmd = strings.Join(strings.Split(cmd, " ")[:2], " ")
 	}
 
@@ -18,28 +16,27 @@ func (i *Items) CheckCommand(cmd string) (string, error) {
 	case "/start":
 		msg = startMsg
 	case "/list items":
-		msg = i.ListItems()
-		if msg == "" {
-			msg = noItems
+		if len(params) == 0 {
+			msg = i.ListItems("")
+			if msg == "" {
+				msg = noItems
+			}
+		} else {
+			msg = i.ListItems(strings.Join(params[0:], " "))
 		}
 	case "/add item":
-		if params == "" {
-			msg = addChoose
-		} else {
-			res, err := i.AddItem(params)
-			if err != nil {
-				return "", err
-			}
-			return res, nil
+		msg, err := i.AddItemDetails(params)
+		if err != nil {
+			return "", err
 		}
+		return msg, nil
 	case "/edit item":
 		msg = editChoose
 	case "/delete item":
-		if params == "" {
+		if len(params) == 0 {
 			msg = deleteChoose
 		} else {
-			res := i.DeleteItem(params)
-			return res, nil
+			msg = i.DeleteItem(params[0])
 		}
 	default:
 		msg = invalidMsg
@@ -55,35 +52,29 @@ func (i *Items) CheckItem(item string) bool {
 }
 
 // ListItems returns all the items in the inventory
-func (i *Items) ListItems() string {
+func (i *Items) ListItems(params string) string {
 	var (
 		items     []Item
 		itemsList string
 	)
 
-	i.db.Find(&items)
+	if params == "sort by name" {
+		i.db.Order("name").Find(&items)
+	} else {
+		i.db.Find(&items)
+	}
+
 	for _, item := range items {
 		itemsList += item.Name + "\n"
 	}
+
 	return itemsList
 }
 
-// AddItem adds an item to the inventory
-func (i *Items) AddItem(item string) (string, error) {
-	rec := Item{Name: item}
-
-	err := i.db.Create(&rec)
-	if err.Error != nil {
-		return "", err.Error
-	}
-
-	msg := strings.ReplaceAll(addSuccess, "<item>", item)
-	return msg, nil
-}
-
 // EditItem updates an item's properties
-func (i *Items) EditItem(item, newItem string) {
-	i.db.Model(&Item{}).Where("name = ?", item).Update("name", newItem)
+func (i *Items) EditItem(field, item, newItem string) error {
+	res := i.db.Model(&Item{}).Where("name = ?", item).Update(field, newItem)
+	return res.Error
 }
 
 // DeleteItem deletes an item
