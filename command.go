@@ -7,15 +7,14 @@ func (i *Items) CheckCommand(cmd string) (string, error) {
 	var msg string
 	var params []string
 
-	if len(strings.Split(cmd, " ")) > 2 {
-		params = strings.Split(cmd, " ")[2:]
-		cmd = strings.Join(strings.Split(cmd, " ")[:2], " ")
+	if len(strings.Split(cmd, " ")) > 1 {
+		params = strings.Split(cmd, " ")[1:]
 	}
 
 	switch cmd {
 	case "/start":
 		msg = startMsg
-	case "/list items":
+	case "/listitems":
 		if len(params) == 0 {
 			msg = i.ListItems("")
 			if msg == "" {
@@ -24,19 +23,25 @@ func (i *Items) CheckCommand(cmd string) (string, error) {
 		} else {
 			msg = i.ListItems(strings.Join(params[0:], " "))
 		}
-	case "/add item":
+	case "/showitem":
+		msg, err := i.ShowItem(params)
+		if err != nil {
+			return "", err
+		}
+		return msg, nil
+	case "/additem":
 		msg, err := i.AddItem(params)
 		if err != nil {
 			return "", err
 		}
 		return msg, nil
-	case "/update item":
+	case "/updateitem":
 		msg, err := i.UpdateItem(params)
 		if err != nil {
 			return "", err
 		}
 		return msg, nil
-	case "/delete item":
+	case "/deleteitem":
 		if len(params) == 0 {
 			msg = deleteChoose
 		} else {

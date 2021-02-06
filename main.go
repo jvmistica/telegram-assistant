@@ -49,13 +49,13 @@ func main() {
 		}
 
 		txt = update.Message.Text
-		if oldMsg == "/add item" {
+		if oldMsg == "/additem" {
 			res, err := i.AddItem([]string{txt})
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
 			}
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
-		} else if oldMsg == "/delete item" {
+		} else if oldMsg == "/deleteitem" {
 			res := i.DeleteItem([]string{txt})
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 		} else {
@@ -67,6 +67,7 @@ func main() {
 		}
 
 		oldMsg = txt
+		msg.ParseMode = "Markdown"
 		bot.Send(msg)
 	}
 }
