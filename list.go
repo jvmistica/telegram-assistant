@@ -7,9 +7,18 @@ func (i *Items) ListItems(params string) string {
 		itemsList string
 	)
 
-	if params == "sort by name" {
+	switch params {
+	case "sort by name":
 		i.db.Order("name").Find(&items)
-	} else {
+	case "sort by amount":
+		i.db.Order("amount").Find(&items)
+	case "sort by category":
+		i.db.Order("category").Find(&items)
+	case "sort by price":
+		i.db.Order("price").Find(&items)
+	case "sort by expiration":
+		i.db.Order("expiration").Find(&items)
+	default:
 		i.db.Find(&items)
 	}
 
