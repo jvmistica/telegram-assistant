@@ -9,7 +9,7 @@ type Item struct {
 	Amount      float32
 	Category    string
 	Price       float32
-	Expiration  string
+	Expiration  time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
