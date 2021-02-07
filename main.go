@@ -52,18 +52,20 @@ func main() {
 		if oldMsg == "/additem" {
 			res, err := i.AddItem([]string{txt})
 			if err != nil {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+			} else {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 			}
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 		} else if oldMsg == "/deleteitem" {
 			res := i.DeleteItem([]string{txt})
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 		} else {
 			cmds, err := i.CheckCommand(txt)
 			if err != nil {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("An error occured. %s", err))
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+			} else {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
 			}
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
 		}
 
 		oldMsg = txt

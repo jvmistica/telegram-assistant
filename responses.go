@@ -29,6 +29,12 @@ var (
 
 	updateChoose  = "Which item do you want to update?"
 	updateSuccess = "Updated <item>'s <field>."
+	updateInvalid = "Invalid parameters. To update an item, use the commands below:\n" +
+		"/updateitem description _itemDescription_\n" +
+		"/updateitem amount _itemAmount_\n" +
+		"/updateitem category _itemCategory_\n" +
+		"/updateitem price _itemPrice_\n" +
+		"/updateitem expiration _itemExpiration_\n"
 
 	itemNotExist = "Item \"<item>\" does not exist in the inventory."
 	noItems      = "There are no items in your inventory."
