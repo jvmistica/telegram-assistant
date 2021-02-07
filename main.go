@@ -18,6 +18,13 @@ func NewItems(db *gorm.DB) *Items {
 }
 
 func main() {
+	var (
+		oldMsg string
+		txt    string
+		msg    tgbotapi.MessageConfig
+		err    error
+	)
+
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
 	user := os.Getenv("POSTGRES_USER")
@@ -38,8 +45,6 @@ func main() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
-	var oldMsg, txt string
-	var msg tgbotapi.MessageConfig
 	updates, err := bot.GetUpdatesChan(u)
 	i := NewItems(db)
 
@@ -57,8 +62,12 @@ func main() {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 			}
 		} else if oldMsg == "/deleteitem" {
-			res := i.DeleteItem([]string{txt})
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
+			res, err := i.DeleteItem([]string{txt})
+			if err != nil {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+			} else {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
+			}
 		} else {
 			cmds, err := i.CheckCommand(txt)
 			if err != nil {

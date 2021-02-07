@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -17,12 +18,12 @@ func (i *Items) ShowItem(param []string) (string, error) {
 		return "", res.Error
 	}
 
-	if res.RowsAffected > 0 {
-		details = fmt.Sprintf("*%s* (%s)\n%s\nAmount: %f\nPrice: %f\nExpiration: %s",
-			strings.Title(item.Name), strings.Title(item.Category), item.Description, item.Amount, item.Price, item.Expiration)
-	} else {
-		details = strings.ReplaceAll(itemNotExist, "<item>", strings.Join(param, " "))
+	if res.RowsAffected == 0 {
+		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", strings.Join(param, " ")))
 	}
+
+	details = fmt.Sprintf("*%s* (%s)\n%s\nAmount: %f\nPrice: %f\nExpiration: %s",
+		strings.Title(item.Name), strings.Title(item.Category), item.Description, item.Amount, item.Price, item.Expiration)
 
 	return details, nil
 }

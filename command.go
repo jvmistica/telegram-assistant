@@ -6,6 +6,7 @@ import "strings"
 func (i *Items) CheckCommand(cmd string) (string, error) {
 	var (
 		msg    string
+		err    error
 		params []string
 	)
 
@@ -27,31 +28,24 @@ func (i *Items) CheckCommand(cmd string) (string, error) {
 			msg = i.ListItems(strings.Join(params[0:], " "))
 		}
 	case "/showitem":
-		msg, err := i.ShowItem(params)
-		if err != nil {
-			return "", err
-		}
-		return msg, nil
+		msg, err = i.ShowItem(params)
 	case "/additem":
-		msg, err := i.AddItem(params)
-		if err != nil {
-			return "", err
-		}
-		return msg, nil
+		msg, err = i.AddItem(params)
 	case "/updateitem":
-		msg, err := i.UpdateItem(params)
-		if err != nil {
-			return "", err
-		}
-		return msg, nil
+		msg, err = i.UpdateItem(params)
 	case "/deleteitem":
 		if len(params) == 0 {
 			msg = deleteChoose
 		} else {
-			msg = i.DeleteItem(params)
+			msg, err = i.DeleteItem(params)
 		}
 	default:
 		msg = invalidMsg
 	}
+
+	if err != nil {
+		return "", err
+	}
+
 	return msg, nil
 }
