@@ -4,11 +4,14 @@ import "strings"
 
 // CheckCommand checks if the command is valid and returns the appropriate response
 func (i *Items) CheckCommand(cmd string) (string, error) {
-	var msg string
-	var params []string
+	var (
+		msg    string
+		params []string
+	)
 
 	if len(strings.Split(cmd, " ")) > 1 {
 		params = strings.Split(cmd, " ")[1:]
+		cmd = strings.Split(cmd, " ")[0]
 	}
 
 	switch cmd {
