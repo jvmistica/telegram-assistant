@@ -16,16 +16,16 @@ func (i *Items) UpdateItem(params []string) (string, error) {
 		return "", errors.New(updateInvalid)
 	}
 
-	res := i.db.Model(&Item{}).Where("name = ?", params[1]).Update(params[0], strings.Join(params[2:], " "))
+	res := i.db.Model(&Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
 	if res.Error != nil {
 		return "", res.Error
 	}
 
 	if res.RowsAffected == 0 {
-		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", params[1]))
+		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", params[0]))
 	}
 
-	msg = strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", params[1]), "<field>", params[0])
+	msg = strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", params[0]), "<field>", params[1])
 
 	return msg, nil
 }
