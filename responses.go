@@ -18,11 +18,11 @@ var (
 	addChoose  = "What is this item called?"
 	addSuccess = "Added \"<item>\" to the inventory.\n\n" +
 		"Update this item's details using the commands below:\n" +
-		"/updateitem description _itemDescription_\n" +
-		"/updateitem amount _itemAmount_\n" +
-		"/updateitem category _itemCategory_\n" +
-		"/updateitem price _itemPrice_\n" +
-		"/updateitem expiration _itemExpiration_\n"
+		"/updateitem _itemName_ description _itemDescription_\n" +
+		"/updateitem _itemName_ amount _itemAmount_\n" +
+		"/updateitem _itemName_ category _itemCategory_\n" +
+		"/updateitem _itemName_ price _itemPrice_\n" +
+		"/updateitem _itemName_ expiration _itemExpiration_\n"
 
 	deleteChoose  = "Which item do you want to delete?"
 	deleteSuccess = "Removed \"<item>\" from the inventory."
@@ -30,11 +30,11 @@ var (
 	updateChoose  = "Which item do you want to update?"
 	updateSuccess = "Updated <item>'s <field>."
 	updateInvalid = "Invalid parameters. To update an item, use the commands below:\n" +
-		"/updateitem description _itemDescription_\n" +
-		"/updateitem amount _itemAmount_\n" +
-		"/updateitem category _itemCategory_\n" +
-		"/updateitem price _itemPrice_\n" +
-		"/updateitem expiration _itemExpiration_\n"
+		"/updateitem _itemName_ description _itemDescription_\n" +
+		"/updateitem _itemName_ amount _itemAmount_\n" +
+		"/updateitem _itemName_ category _itemCategory_\n" +
+		"/updateitem _itemName_ price _itemPrice_\n" +
+		"/updateitem _itemName_ expiration _itemExpiration_\n"
 
 	itemNotExist = "Item \"<item>\" does not exist in the inventory."
 	noItems      = "There are no items in your inventory."

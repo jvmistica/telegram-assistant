@@ -22,8 +22,24 @@ func (i *Items) ShowItem(param []string) (string, error) {
 		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", strings.Join(param, " ")))
 	}
 
-	details = fmt.Sprintf("*%s* (%s)\n%s\nAmount: %f %s\nPrice: %f %s\nExpiration: %s",
-		strings.Title(item.Name), strings.Title(item.Category), item.Description, item.Amount, item.Unit, item.Price, item.Currency, item.Expiration)
+	category := "_Uncategorized_"
+	if item.Category != "" {
+		category = strings.Title(item.Category)
+	}
+
+	description := "_No description_"
+	if item.Description != "" {
+		description = item.Description
+	}
+
+	exp := item.Expiration
+	expiration := exp.Format("2006/01/02")
+	if expiration[0] == '0' {
+		expiration = "_Not set_"
+	}
+
+	details = fmt.Sprintf("*%s* (%s)\n\n%s\nAmount: %.2f %s\nPrice: %.2f %s\nExpiration: %s",
+		strings.Title(item.Name), category, description, item.Amount, item.Unit, item.Price, item.Currency, expiration)
 
 	return details, nil
 }
