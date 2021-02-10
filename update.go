@@ -32,6 +32,16 @@ func (i *Items) UpdateItem(params []string) (string, error) {
 		if res.Error != nil {
 			return "", res.Error
 		}
+	} else if params[1] == "price" && len(params) > 3 {
+		f, err := strconv.ParseFloat(params[2], 32)
+		if err != nil {
+			return "", err
+		}
+
+		res = i.db.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Price: float32(f), Currency: params[3]})
+		if res.Error != nil {
+			return "", res.Error
+		}
 	} else {
 		res = i.db.Model(&Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
 		if res.Error != nil {
