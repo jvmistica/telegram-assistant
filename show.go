@@ -22,8 +22,8 @@ func (i *Items) ShowItem(param []string) (string, error) {
 		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", strings.Join(param, " ")))
 	}
 
-	details = fmt.Sprintf("*%s* (%s)\n%s\nAmount: %f\nPrice: %f\nExpiration: %s",
-		strings.Title(item.Name), strings.Title(item.Category), item.Description, item.Amount, item.Price, item.Expiration)
+	details = fmt.Sprintf("*%s* (%s)\n%s\nAmount: %f %s\nPrice: %f\nExpiration: %s",
+		strings.Title(item.Name), strings.Title(item.Category), item.Description, item.Amount, item.Unit, item.Price, item.Expiration)
 
 	return details, nil
 }

@@ -2,12 +2,18 @@ package main
 
 import (
 	"errors"
+	"gorm.io/gorm"
+	"strconv"
 	"strings"
 )
 
 // UpdateItem updates an existing item's details
 func (i *Items) UpdateItem(params []string) (string, error) {
-	var msg string
+	var (
+		msg string
+		res *gorm.DB
+	)
+
 	if len(params) == 0 {
 		return updateChoose, nil
 	}
@@ -16,9 +22,21 @@ func (i *Items) UpdateItem(params []string) (string, error) {
 		return "", errors.New(updateInvalid)
 	}
 
-	res := i.db.Model(&Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
-	if res.Error != nil {
-		return "", res.Error
+	if params[1] == "amount" && len(params) > 3 {
+		f, err := strconv.ParseFloat(params[2], 32)
+		if err != nil {
+			return "", err
+		}
+
+		res = i.db.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Amount: float32(f), Unit: params[3]})
+		if res.Error != nil {
+			return "", res.Error
+		}
+	} else {
+		res = i.db.Model(&Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
+		if res.Error != nil {
+			return "", res.Error
+		}
 	}
 
 	if res.RowsAffected == 0 {

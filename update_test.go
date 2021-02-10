@@ -22,32 +22,32 @@ func TestUpdateItem(t *testing.T) {
 			wantErr:  false,
 		},
 		{
-			params:   []string{"category", "melon", "fruit"},
+			params:   []string{"melon", "category", "fruit"},
 			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "category"),
 			wantErr:  false,
 		},
 		{
-			params:   []string{"amount", "melon", "2"},
+			params:   []string{"melon", "amount", "2"},
 			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "amount"),
 			wantErr:  false,
 		},
 		{
-			params:   []string{"price", "melon", "30.50"},
+			params:   []string{"melon", "price", "30.50"},
 			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "price"),
 			wantErr:  false,
 		},
 		{
-			params:   []string{"price"},
+			params:   []string{"melon"},
 			expected: updateInvalid,
 			wantErr:  true,
 		},
 		{
-			params:   []string{"price", "melon"},
+			params:   []string{"melon", "price"},
 			expected: updateInvalid,
 			wantErr:  true,
 		},
 		{
-			params:   []string{"amount", "egg", "12"},
+			params:   []string{"egg", "amount", "12"},
 			expected: strings.ReplaceAll(itemNotExist, "<item>", "egg"),
 			wantErr:  true,
 		},

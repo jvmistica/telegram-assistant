@@ -7,8 +7,10 @@ type Item struct {
 	Name        string
 	Description string
 	Amount      float32
+	Unit        string
 	Category    string
 	Price       float32
+	Currency    string
 	Expiration  time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
