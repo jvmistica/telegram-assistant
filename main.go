@@ -35,6 +35,7 @@ func main() {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
 		host, user, password, database, port)
 	db, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db.AutoMigrate(Item{})
 
 	// Listen to messages sent to Telegram bot
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
