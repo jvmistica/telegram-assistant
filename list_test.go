@@ -13,7 +13,8 @@ func TestListItems(t *testing.T) {
 
 	i := Items{db: DB}
 	t.Run("no items", func(t *testing.T) {
-		res := i.ListItems("")
+		res, err := i.ListItems("")
+		assert.Nil(t, err)
 		assert.Equal(t, "There are no items in your inventory.", res)
 	})
 
@@ -22,7 +23,8 @@ func TestListItems(t *testing.T) {
 			{"name": "oil", "amount": 1, "category": "fat", "price": 20.00, "expiration": time.Date(2021, 5, 23, 20, 34, 58, 651387237, time.UTC)},
 			{"name": "flour", "amount": 2, "category": "carbohydrate", "price": 18.68, "expiration": time.Date(2021, 8, 22, 20, 34, 58, 651387237, time.UTC)}}
 		mocket.Catcher.Reset().NewMock().WithQuery(`SELECT * FROM "items"`).WithReply(records)
-		res := i.ListItems("")
+		res, err := i.ListItems("")
+		assert.Nil(t, err)
 		assert.Equal(t, "egg\noil\nflour\n", res)
 	})
 }

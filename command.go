@@ -20,9 +20,9 @@ func (i *Items) CheckCommand(cmd string) (string, error) {
 		msg = startMsg
 	case "/listitems":
 		if len(params) == 0 {
-			msg = i.ListItems("")
+			msg, err = i.ListItems("")
 		} else {
-			msg = i.ListItems(strings.Join(params[0:], " "))
+			msg, err = i.ListItems(strings.Join(params[0:], " "))
 		}
 	case "/showitem":
 		msg, err = i.ShowItem(params)
