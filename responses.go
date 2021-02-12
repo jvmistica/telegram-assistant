@@ -1,14 +1,14 @@
 package main
 
 var (
-	startMsg = "Welcome. Here's a list of my commands:\n" +
+	startMsg = "Welcome. Here's a list of my commands:\n\n" +
 		"/listitems - list items in your inventory\n" +
 		"/showitem - show an item's details\n" +
 		"/additem - add an item\n" +
 		"/updateitem - update an item\n" +
 		"/deleteitem - delete an item\n"
 
-	invalidMsg = "That's not a valid command. Here's a list of valid commands:\n" +
+	invalidMsg = "That's not a valid command. Here's a list of valid commands:\n\n" +
 		"/listitems - list items in your inventory\n" +
 		"/showitem - show an item's details\n" +
 		"/additem - add an item\n" +
@@ -38,7 +38,8 @@ var (
 
 	updateChoose  = "Which item do you want to update?"
 	updateSuccess = "Updated <item>'s <field>."
-	updateInvalid = "Invalid parameters. To update an item, use the commands below:\n" +
+	updateInvalid = "Invalid parameters. To update an item, use the commands below:\n\n" +
+		"*Update Items*\n" +
 		"/updateitem _itemName_ description _itemDescription_\n" +
 		"/updateitem _itemName_ calories _calories_\n" +
 		"/updateitem _itemName_ amount _itemAmount_ _unit_\n" +
