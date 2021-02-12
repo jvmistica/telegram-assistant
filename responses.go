@@ -27,9 +27,10 @@ var (
 	addSuccess = "Added \"<item>\" to the inventory.\n\n" +
 		"Update this item's details using the commands below:\n" +
 		"/updateitem _itemName_ description _itemDescription_\n" +
-		"/updateitem _itemName_ amount _itemAmount_\n" +
+		"/updateitem _itemName_ calories _calories_\n" +
+		"/updateitem _itemName_ amount _itemAmount_ _unit_\n" +
 		"/updateitem _itemName_ category _itemCategory_\n" +
-		"/updateitem _itemName_ price _itemPrice_\n" +
+		"/updateitem _itemName_ price _itemPrice_ _currency_\n" +
 		"/updateitem _itemName_ expiration _itemExpiration_\n"
 
 	deleteChoose  = "Which item do you want to delete?"
@@ -39,9 +40,10 @@ var (
 	updateSuccess = "Updated <item>'s <field>."
 	updateInvalid = "Invalid parameters. To update an item, use the commands below:\n" +
 		"/updateitem _itemName_ description _itemDescription_\n" +
-		"/updateitem _itemName_ amount _itemAmount_\n" +
+		"/updateitem _itemName_ calories _calories_\n" +
+		"/updateitem _itemName_ amount _itemAmount_ _unit_\n" +
 		"/updateitem _itemName_ category _itemCategory_\n" +
-		"/updateitem _itemName_ price _itemPrice_\n" +
+		"/updateitem _itemName_ price _itemPrice_ _currency_\n" +
 		"/updateitem _itemName_ expiration _itemExpiration_\n"
 
 	itemNotExist  = "Item \"<item>\" does not exist in the inventory."

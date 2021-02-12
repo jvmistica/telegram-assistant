@@ -8,6 +8,7 @@ type Item struct {
 	Description string
 	Amount      float32
 	Unit        string
+	Calories    uint16
 	Category    string
 	Price       float32
 	Currency    string
