@@ -21,9 +21,6 @@ func (i *Items) CheckCommand(cmd string) (string, error) {
 	case "/listitems":
 		if len(params) == 0 {
 			msg = i.ListItems("")
-			if msg == "" {
-				msg = noItems
-			}
 		} else {
 			msg = i.ListItems(strings.Join(params[0:], " "))
 		}
@@ -34,11 +31,7 @@ func (i *Items) CheckCommand(cmd string) (string, error) {
 	case "/updateitem":
 		msg, err = i.UpdateItem(params)
 	case "/deleteitem":
-		if len(params) == 0 {
-			msg = deleteChoose
-		} else {
-			msg, err = i.DeleteItem(params)
-		}
+		msg, err = i.DeleteItem(params)
 	default:
 		msg = invalidMsg
 	}

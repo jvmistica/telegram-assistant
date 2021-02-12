@@ -14,7 +14,7 @@ func TestListItems(t *testing.T) {
 	i := Items{db: DB}
 	t.Run("no items", func(t *testing.T) {
 		res := i.ListItems("")
-		assert.Equal(t, "", res)
+		assert.Equal(t, "There are no items in your inventory.", res)
 	})
 
 	t.Run("has items", func(t *testing.T) {

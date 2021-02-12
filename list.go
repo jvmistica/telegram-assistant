@@ -13,6 +13,7 @@ func (i *Items) ListItems(params string) string {
 	)
 
 	cmd := strings.Split(params, " ")
+
 	switch cmd[0] {
 	case "sort":
 		if len(cmd) > 3 {
@@ -28,6 +29,10 @@ func (i *Items) ListItems(params string) string {
 
 	for _, item := range items {
 		itemsList += item.Name + "\n"
+	}
+
+	if itemsList == "" {
+		itemsList = noItems
 	}
 
 	return itemsList
