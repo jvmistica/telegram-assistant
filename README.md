@@ -1,5 +1,5 @@
 # Henchmaid
-![Go](https://github.com/jvmistica/henchmaid/blob/main/.github/workflows/go.yml/badge.svg)  
+![Build status](https://github.com/jvmistica/henchmaid/workflows/Go/badge.svg)  
 A telegram bot that allows users to manage their inventory.
 
 ## Commands
