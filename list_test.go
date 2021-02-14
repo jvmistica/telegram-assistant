@@ -8,6 +8,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestListItemsInvalidArgs(t *testing.T) {
+	params := []string{"sort", "sort by", "filter", "filter by", "something made-up"}
+
+	i := Items{}
+	for _, p := range params {
+		res, err := i.ListItems(p)
+		assert.Equal(t, invalidListMsg, res)
+		assert.Nil(t, err)
+	}
+}
+
 func TestListItems(t *testing.T) {
 	SetupTests()
 
@@ -15,7 +26,21 @@ func TestListItems(t *testing.T) {
 	t.Run("no items", func(t *testing.T) {
 		res, err := i.ListItems("")
 		assert.Nil(t, err)
-		assert.Equal(t, "There are no items in your inventory.", res)
+		assert.Equal(t, noItems, res)
+	})
+
+	t.Run("sort no items", func(t *testing.T) {
+		mocket.Catcher.Reset().NewMock().WithReply(nil)
+		res, err := i.ListItems("sort by name")
+		assert.Nil(t, err)
+		assert.Equal(t, noItems, res)
+	})
+
+	t.Run("filter no match", func(t *testing.T) {
+		mocket.Catcher.Reset().NewMock().WithReply(nil)
+		res, err := i.ListItems("filter by amount = 999.99")
+		assert.Nil(t, err)
+		assert.Equal(t, noMatchFilter, res)
 	})
 
 	t.Run("has items", func(t *testing.T) {
