@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -19,7 +18,7 @@ func (i *Items) ShowItem(param []string) (string, error) {
 	}
 
 	if res.RowsAffected == 0 {
-		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", strings.Join(param, " ")))
+		return strings.ReplaceAll(itemNotExist, "<item>", strings.Join(param, " ")), nil
 	}
 
 	category := "_Uncategorized_"

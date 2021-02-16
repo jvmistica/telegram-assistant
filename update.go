@@ -50,10 +50,10 @@ func (i *Items) UpdateItem(params []string) (string, error) {
 	}
 
 	if res.RowsAffected == 0 {
-		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", params[0]))
+		msg = strings.ReplaceAll(itemNotExist, "<item>", params[0])
+	} else {
+		msg = strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", params[0]), "<field>", params[1])
 	}
-
-	msg = strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", params[0]), "<field>", params[1])
 
 	return msg, nil
 }

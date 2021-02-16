@@ -1,25 +1,26 @@
 package main
 
-import (
-	"errors"
-	"strings"
-)
+import "strings"
 
 // DeleteItem deletes an item
 func (i *Items) DeleteItem(params []string) (string, error) {
+	var msg string
+
 	if len(params) == 0 {
 		return deleteChoose, nil
 	}
 
-	var msg string
 	item := strings.Join(params, " ")
 	res := i.db.Where("name = ?", item).Delete(Item{})
-
-	if res.RowsAffected == 0 {
-		return "", errors.New(strings.ReplaceAll(itemNotExist, "<item>", item))
+	if res.Error != nil {
+		return "", res.Error
 	}
 
-	msg = strings.ReplaceAll(deleteSuccess, "<item>", item)
+	if res.RowsAffected == 0 {
+		msg = strings.ReplaceAll(itemNotExist, "<item>", item)
+	} else {
+		msg = strings.ReplaceAll(deleteSuccess, "<item>", item)
+	}
 
 	return msg, nil
 }

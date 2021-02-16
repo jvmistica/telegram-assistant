@@ -16,8 +16,8 @@ func TestShowItem(t *testing.T) {
 	t.Run("no items", func(t *testing.T) {
 		mocket.Catcher.Reset().NewMock().WithQuery(`SELECT * FROM "items" WHERE`).WithReply(nil)
 		res, err := i.ShowItem([]string{"milk"})
-		assert.Equal(t, "", res)
-		assert.Equal(t, strings.ReplaceAll(itemNotExist, "<item>", "milk"), err.Error())
+		assert.Nil(t, err)
+		assert.Equal(t, strings.ReplaceAll(itemNotExist, "<item>", "milk"), res)
 	})
 
 	t.Run("no category", func(t *testing.T) {
