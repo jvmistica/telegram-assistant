@@ -9,22 +9,15 @@ import (
 	"os"
 )
 
-type Items struct {
-	db *gorm.DB
-}
+var (
+	oldMsg string
+	txt    string
+	msg    tgbotapi.MessageConfig
+	err    error
+	db     *gorm.DB
+)
 
-func NewItems(db *gorm.DB) *Items {
-	return &Items{db: db}
-}
-
-func main() {
-	var (
-		oldMsg string
-		txt    string
-		msg    tgbotapi.MessageConfig
-		err    error
-	)
-
+func init() {
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
 	user := os.Getenv("POSTGRES_USER")
@@ -34,9 +27,15 @@ func main() {
 	// Connect to the database
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
 		host, user, password, database, port)
-	db, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	db.AutoMigrate(Item{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	db.AutoMigrate(Item{})
+}
+
+func main() {
 	// Listen to messages sent to Telegram bot
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 	if err != nil {

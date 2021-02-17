@@ -14,27 +14,27 @@ func TestDeleteItem(t *testing.T) {
 	tests := []struct {
 		params   []string
 		expected string
-		noRows  bool
+		noRows   bool
 	}{
 		{
 			params:   []string{},
 			expected: deleteChoose,
-			noRows:  false,
+			noRows:   false,
 		},
 		{
 			params:   []string{"flour"},
 			expected: strings.ReplaceAll(deleteSuccess, "<item>", "flour"),
-			noRows:  false,
+			noRows:   false,
 		},
 		{
 			params:   []string{"almond", "flour"},
 			expected: strings.ReplaceAll(deleteSuccess, "<item>", "almond flour"),
-			noRows:  false,
+			noRows:   false,
 		},
 		{
 			params:   []string{"milk"},
 			expected: strings.ReplaceAll(itemNotExist, "<item>", "milk"),
-			noRows:  true,
+			noRows:   true,
 		},
 	}
 
