@@ -17,7 +17,7 @@ var (
 	db     *gorm.DB
 )
 
-func init() {
+func main() {
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
 	user := os.Getenv("POSTGRES_USER")
@@ -33,9 +33,7 @@ func init() {
 	}
 
 	db.AutoMigrate(Item{})
-}
 
-func main() {
 	// Listen to messages sent to Telegram bot
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 	if err != nil {
