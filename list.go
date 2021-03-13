@@ -37,7 +37,15 @@ func (i *Items) ListItems(params string) (string, error) {
 	}
 
 	for _, item := range items {
-		itemsList += item.Name + "\n"
+		if len(cmd) >= 3 && strings.Join(cmd[:2], " ") == "sort by" {
+			if item.Expiration.Year() == 0 {
+				itemsList += fmt.Sprintf("Not Available - %s\n", item.Name)
+			} else {
+				itemsList += fmt.Sprintf("%s %d - %s\n", item.Expiration.Month().String()[:3], item.Expiration.Year(), item.Name)
+			}
+		} else {
+			itemsList += item.Name + "\n"
+		}
 	}
 
 	if itemsList == "" {
