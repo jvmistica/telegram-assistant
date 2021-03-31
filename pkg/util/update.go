@@ -1,10 +1,11 @@
-package main
+package util
 
 import (
 	"errors"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
+	"github.com/jvmistica/henchmaid/pkg/types"
 )
 
 // UpdateItem updates an existing item's details
@@ -28,7 +29,7 @@ func (i *Items) UpdateItem(params []string) (string, error) {
 			return "", err
 		}
 
-		res = i.db.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Amount: float32(f), Unit: params[3]})
+		res = i.db.Model(&types.Item{}).Where("name = ?", params[0]).Updates(types.Item{Amount: float32(f), Unit: params[3]})
 		if res.Error != nil {
 			return "", res.Error
 		}
@@ -38,12 +39,12 @@ func (i *Items) UpdateItem(params []string) (string, error) {
 			return "", err
 		}
 
-		res = i.db.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Price: float32(f), Currency: params[3]})
+		res = i.db.Model(&types.Item{}).Where("name = ?", params[0]).Updates(types.Item{Price: float32(f), Currency: params[3]})
 		if res.Error != nil {
 			return "", res.Error
 		}
 	} else {
-		res = i.db.Model(&Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
+		res = i.db.Model(&types.Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
 		if res.Error != nil {
 			return "", res.Error
 		}

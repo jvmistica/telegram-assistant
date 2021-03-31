@@ -1,6 +1,9 @@
-package main
+package util
 
-import "strings"
+import (
+	"strings"
+	"github.com/jvmistica/henchmaid/pkg/types"
+)
 
 // AddItem adds an item to the inventory
 func (i *Items) AddItem(params []string) (string, error) {
@@ -9,7 +12,7 @@ func (i *Items) AddItem(params []string) (string, error) {
 	}
 
 	item := strings.Join(params, " ")
-	rec := Item{Name: item}
+	rec := types.Item{Name: item}
 	err := i.db.Create(&rec)
 	if err.Error != nil {
 		return "", err.Error

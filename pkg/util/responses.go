@@ -1,4 +1,4 @@
-package main
+package util
 
 var (
 	startMsg = "Welcome. Here's a list of my commands:\n\n" +
