@@ -1,15 +1,14 @@
-package util
+package item
 
 import (
 	"fmt"
 	"strings"
-	"github.com/jvmistica/henchmaid/pkg/types"
 )
 
 // ShowItem returns the details of an item
 func (i *Items) ShowItem(param []string) (string, error) {
 	var (
-		item    types.Item
+		item    Item
 		details string
 	)
 

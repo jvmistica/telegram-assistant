@@ -1,16 +1,15 @@
-package util
+package item
 
 import (
 	"fmt"
 	"gorm.io/gorm"
 	"strings"
-	"github.com/jvmistica/henchmaid/pkg/types"
 )
 
 // ListItems returns all the items in the inventory
 func (i *Items) ListItems(params string) (string, error) {
 	var (
-		items     []types.Item
+		items     []Item
 		itemsList string
 		res       *gorm.DB
 	)

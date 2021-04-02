@@ -1,4 +1,14 @@
-files = $(shell ls *.go | grep -v "_test.go")
+format:
+	@go fmt ./...
+
+test:
+	@go test -cover -v ./...
 
 run:
-	@go run $(files)
+	@go run cmd/henchmaid/main.go
+
+build:
+	@go build -v ./...
+
+install:
+	@go install -v ./...

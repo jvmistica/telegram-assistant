@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/jvmistica/henchmaid/pkg/types"
-	"github.com/jvmistica/henchmaid/pkg/util"
+	"github.com/jvmistica/henchmaid/pkg/item"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -34,7 +33,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(types.Item{})
+	db.AutoMigrate(item.Item{})
 
 	// Listen to messages sent to Telegram bot
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
@@ -46,7 +45,7 @@ func main() {
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
-	i := util.NewItems(db)
+	i := item.NewItems(db)
 
 	for update := range updates {
 		if update.Message == nil {

@@ -1,9 +1,6 @@
-package util
+package item
 
-import (
-	"strings"
-	"github.com/jvmistica/henchmaid/pkg/types"
-)
+import "strings"
 
 // DeleteItem deletes an item
 func (i *Items) DeleteItem(params []string) (string, error) {
@@ -14,7 +11,7 @@ func (i *Items) DeleteItem(params []string) (string, error) {
 	}
 
 	item := strings.Join(params, " ")
-	res := i.db.Where("name = ?", item).Delete(types.Item{})
+	res := i.db.Where("name = ?", item).Delete(Item{})
 	if res.Error != nil {
 		return "", res.Error
 	}
