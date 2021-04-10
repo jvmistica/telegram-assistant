@@ -1,9 +1,6 @@
-package item
+package record
 
-import (
-	"strings"
-	"github.com/jvmistica/henchmaid/pkg/record"
-)
+import "strings"
 
 // CheckCommand checks if the command is valid and returns the appropriate response
 func (i *Item) CheckCommand(cmd string) (string, error) {
@@ -22,15 +19,15 @@ func (i *Item) CheckCommand(cmd string) (string, error) {
 	case "/start":
 		msg = startMsg
 	case "/listitems":
-		msg, err = record.List(i, params)
+		msg, err = List(i, params)
 	case "/showitem":
-		msg, err = record.Show(i, params)
+		msg, err = Show(i, params)
 	case "/additem":
-		msg, err = record.Add(i, params)
+		msg, err = Add(i, params)
 	case "/updateitem":
-		msg, err = record.Update(i, params)
+		msg, err = Update(i, params)
 	case "/deleteitem":
-		msg, err = record.Delete(i, params)
+		msg, err = Delete(i, params)
 	default:
 		msg = invalidMsg
 	}

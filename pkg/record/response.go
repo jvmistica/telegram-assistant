@@ -49,5 +49,5 @@ var (
 
 	itemNotExist  = "Item \"<item>\" does not exist in the inventory."
 	noMatchFilter = "There are no items matching that filter."
-	noDB       = "There are no items in your inventory."
+	noItems       = "There are no items in your inventory."
 )

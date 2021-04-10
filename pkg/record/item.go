@@ -1,4 +1,4 @@
-package item
+package record
 
 import (
 	"fmt"
@@ -82,7 +82,7 @@ func (i *Item) ListRecords(cmd []string) (string, error) {
 		res       *gorm.DB
 	)
 
-	if len(cmd) <= 1 {
+	if len(cmd) == 0 {
 		res = i.DB.Find(&items)
 	} else if len(cmd) >= 3 && strings.Join(cmd[:2], " ") == "sort by" {
 		if len(cmd) > 3 && (cmd[3] == "asc" || cmd[3] == "desc") {
@@ -116,7 +116,7 @@ func (i *Item) ListRecords(cmd []string) (string, error) {
 	}
 
 	if itemsList == "" {
-		itemsList = noDB
+		itemsList = noItems
 	}
 
 	return itemsList, nil

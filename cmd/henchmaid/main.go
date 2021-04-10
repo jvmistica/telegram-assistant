@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/jvmistica/henchmaid/pkg/item"
 	"github.com/jvmistica/henchmaid/pkg/record"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -35,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(item.ItemRecord{})
+	db.AutoMigrate(record.ItemRecord{})
 
 	// Listen to messages sent to Telegram bot
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
@@ -47,7 +46,7 @@ func main() {
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
-	i := &item.Item{DB: db}
+	i := &record.Item{DB: db}
 
 	for update := range updates {
 		if update.Message == nil {
