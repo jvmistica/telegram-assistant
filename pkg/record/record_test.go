@@ -102,6 +102,77 @@ func TestList(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T){
+	db := SetupTests()
+	i := &Item{DB: db}
+
+	tests := []struct {
+		params   []string
+		expected string
+		wantErr  bool
+		noRows   bool
+	}{
+		{
+			params:   []string{},
+			expected: updateChoose,
+			wantErr:  false,
+			noRows:   false,
+		},
+		{
+			params:   []string{"melon", "category", "fruit"},
+			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "category"),
+			wantErr:  false,
+			noRows:   false,
+		},
+		{
+			params:   []string{"melon", "amount", "2"},
+			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "amount"),
+			wantErr:  false,
+			noRows:   false,
+		},
+		{
+			params:   []string{"melon", "price", "30.50"},
+			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "price"),
+			wantErr:  false,
+			noRows:   false,
+		},
+		{
+			params:   []string{"egg", "amount", "12"},
+			expected: strings.ReplaceAll(itemNotExist, "<item>", "egg"),
+			wantErr:  false,
+			noRows:   true,
+		},
+		{
+			params:   []string{"melon"},
+			expected: updateInvalid,
+			wantErr:  true,
+			noRows:   false,
+		},
+		{
+			params:   []string{"melon", "price"},
+			expected: updateInvalid,
+			wantErr:  true,
+			noRows:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		if tt.wantErr {
+			mocket.Catcher.Reset().NewMock().WithRowsNum(0)
+			actual, err := Update(i, tt.params)
+			assert.Equal(t, "", actual)
+			assert.Equal(t, tt.expected, err.Error())
+		} else if tt.noRows {
+			mocket.Catcher.Reset().NewMock().WithRowsNum(0)
+			actual, err := Update(i, tt.params)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.expected, actual)
+		} else {
+			mocket.Catcher.Reset().NewMock().WithRowsNum(1)
+			actual, err := Update(i, tt.params)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.expected, actual)
+		}
+	}
 }
 
 func TestDelete(t *testing.T){
