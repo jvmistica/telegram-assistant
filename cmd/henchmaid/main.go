@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/jvmistica/henchmaid/pkg/item"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log"
 	"os"
+
+	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/jvmistica/henchmaid/pkg/item"
+	"github.com/jvmistica/henchmaid/pkg/record"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
@@ -33,7 +35,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(item.Item{})
+	db.AutoMigrate(item.ItemRecord{})
 
 	// Listen to messages sent to Telegram bot
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
@@ -45,7 +47,7 @@ func main() {
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
-	i := item.NewItems(db)
+	i := &item.Item{DB: db}
 
 	for update := range updates {
 		if update.Message == nil {
@@ -55,14 +57,14 @@ func main() {
 		txt = update.Message.Text
 		switch oldMsg {
 		case "/additem":
-			res, err := i.AddItem([]string{txt})
+			res, err := record.Add(i, []string{txt})
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
 			} else {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 			}
 		case "/deleteitem":
-			res, err := i.DeleteItem([]string{txt})
+			res, err := record.Delete(i, []string{txt})
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
 			} else {

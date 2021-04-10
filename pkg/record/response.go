@@ -1,4 +1,4 @@
-package item
+package record
 
 var (
 	startMsg = "Welcome. Here's a list of my commands:\n\n" +
