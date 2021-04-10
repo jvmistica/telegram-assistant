@@ -20,22 +20,22 @@ func SetupTests() *gorm.DB {
 	return db
 }
 
-func TestAdd(t *testing.T){
+func TestAdd(t *testing.T) {
 	db := SetupTests()
 	tests := []struct {
-		params []string
-		expected	string
+		params   []string
+		expected string
 	}{
 		{
-			params: []string{},
+			params:   []string{},
 			expected: addChoose,
 		},
 		{
-			params: []string{"melon"},
+			params:   []string{"melon"},
 			expected: strings.ReplaceAll(addSuccess, "<item>", "melon"),
 		},
 		{
-			params: []string{"coconut", "pie"},
+			params:   []string{"coconut", "pie"},
 			expected: strings.ReplaceAll(addSuccess, "<item>", "coconut pie"),
 		},
 	}
@@ -48,7 +48,7 @@ func TestAdd(t *testing.T){
 	}
 }
 
-func TestShow(t *testing.T){
+func TestShow(t *testing.T) {
 	db := SetupTests()
 	i := &Item{DB: db}
 
@@ -101,7 +101,7 @@ func TestList(t *testing.T) {
 	})
 }
 
-func TestUpdate(t *testing.T){
+func TestUpdate(t *testing.T) {
 	db := SetupTests()
 	i := &Item{DB: db}
 
@@ -175,5 +175,48 @@ func TestUpdate(t *testing.T){
 	}
 }
 
-func TestDelete(t *testing.T){
+func TestDelete(t *testing.T) {
+	db := SetupTests()
+	i := &Item{DB: db}
+
+	tests := []struct {
+		params   []string
+		expected string
+		noRows   bool
+	}{
+		{
+			params:   []string{},
+			expected: deleteChoose,
+			noRows:   false,
+		},
+		{
+			params:   []string{"flour"},
+			expected: strings.ReplaceAll(deleteSuccess, "<item>", "flour"),
+			noRows:   false,
+		},
+		{
+			params:   []string{"almond", "flour"},
+			expected: strings.ReplaceAll(deleteSuccess, "<item>", "almond flour"),
+			noRows:   false,
+		},
+		{
+			params:   []string{"milk"},
+			expected: strings.ReplaceAll(itemNotExist, "<item>", "milk"),
+			noRows:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		if tt.noRows {
+			mocket.Catcher.Reset().NewMock().WithRowsNum(0)
+			actual, err := Delete(i, tt.params)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.expected, actual)
+		} else {
+			mocket.Catcher.Reset().NewMock().WithRowsNum(1)
+			actual, err := Delete(i, tt.params)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.expected, actual)
+		}
+	}
 }

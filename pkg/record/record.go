@@ -6,7 +6,7 @@ import (
 )
 
 type Record interface {
-	AddRecord(record string) (error)
+	AddRecord(record string) error
 	ShowRecord(record string) (string, error)
 	ListRecords(params []string) (string, error)
 	UpdateRecord(params []string) (string, error)
