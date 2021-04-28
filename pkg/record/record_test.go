@@ -40,7 +40,7 @@ func TestAdd(t *testing.T) {
 		},
 	}
 
-	i := &Item{DB: db}
+	i := &RecordDB{DB: db}
 	for _, tt := range tests {
 		actual, err := Add(i, tt.params)
 		assert.Nil(t, err)
@@ -50,7 +50,7 @@ func TestAdd(t *testing.T) {
 
 func TestShow(t *testing.T) {
 	db := SetupTests()
-	i := &Item{DB: db}
+	i := &RecordDB{DB: db}
 
 	t.Run("no items", func(t *testing.T) {
 		mocket.Catcher.Reset().NewMock().WithReply(nil)
@@ -89,7 +89,7 @@ func TestShow(t *testing.T) {
 
 func TestList(t *testing.T) {
 	db := SetupTests()
-	i := &Item{DB: db}
+	i := &RecordDB{DB: db}
 
 	t.Run("invalid arguments", func(t *testing.T) {
 		params := []string{"sort", "sort by", "filter", "filter by", "something made-up"}
@@ -103,7 +103,7 @@ func TestList(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	db := SetupTests()
-	i := &Item{DB: db}
+	i := &RecordDB{DB: db}
 
 	tests := []struct {
 		params   []string
@@ -177,7 +177,7 @@ func TestUpdate(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	db := SetupTests()
-	i := &Item{DB: db}
+	i := &RecordDB{DB: db}
 
 	tests := []struct {
 		params   []string

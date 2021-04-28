@@ -3,6 +3,8 @@ package record
 import (
 	"errors"
 	"strings"
+
+	"gorm.io/gorm"
 )
 
 type Record interface {
@@ -11,6 +13,10 @@ type Record interface {
 	ListRecords(params []string) (string, error)
 	UpdateRecord(params []string) (string, error)
 	DeleteRecord(record string) (int64, error)
+}
+
+type RecordDB struct {
+	DB *gorm.DB
 }
 
 func Add(r Record, params []string) (string, error) {

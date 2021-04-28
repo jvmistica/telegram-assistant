@@ -34,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(record.ItemRecord{})
+	db.AutoMigrate(&record.Item{})
 
 	// Listen to messages sent to Telegram bot
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
@@ -46,7 +46,7 @@ func main() {
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
-	i := &record.Item{DB: db}
+	d := &record.RecordDB{DB: db}
 
 	for update := range updates {
 		if update.Message == nil {
@@ -56,21 +56,21 @@ func main() {
 		txt = update.Message.Text
 		switch oldMsg {
 		case "/additem":
-			res, err := record.Add(i, []string{txt})
+			res, err := record.Add(d, []string{txt})
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
 			} else {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 			}
 		case "/deleteitem":
-			res, err := record.Delete(i, []string{txt})
+			res, err := record.Delete(d, []string{txt})
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
 			} else {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
 			}
 		default:
-			cmds, err := i.CheckCommand(txt)
+			cmds, err := d.CheckCommand(txt)
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
 			} else {

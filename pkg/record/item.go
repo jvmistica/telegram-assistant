@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type ItemRecord struct {
+type Item struct {
 	ID          uint
 	Name        string
 	Description string
@@ -24,13 +24,9 @@ type ItemRecord struct {
 	UpdatedAt   time.Time
 }
 
-type Item struct {
-	DB *gorm.DB
-}
-
-func (i *Item) AddRecord(record string) error {
-	rec := ItemRecord{Name: record}
-	err := i.DB.Create(&rec)
+func (r *RecordDB) AddRecord(record string) error {
+	rec := Item{Name: record}
+	err := r.DB.Create(&rec)
 	if err.Error != nil {
 		return err.Error
 	}
@@ -38,13 +34,13 @@ func (i *Item) AddRecord(record string) error {
 	return nil
 }
 
-func (i *Item) ShowRecord(record string) (string, error) {
+func (r *RecordDB) ShowRecord(record string) (string, error) {
 	var (
-		item    ItemRecord
+		item    Item
 		details string
 	)
 
-	res := i.DB.Where("name = ?", record).Find(&item)
+	res := r.DB.Where("name = ?", record).Find(&item)
 	if res.Error != nil {
 		return "", res.Error
 	}
@@ -75,23 +71,23 @@ func (i *Item) ShowRecord(record string) (string, error) {
 	return details, nil
 }
 
-func (i *Item) ListRecords(cmd []string) (string, error) {
+func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	var (
-		items     []ItemRecord
+		items     []Item
 		itemsList string
 		res       *gorm.DB
 	)
 
 	if len(cmd) == 0 {
-		res = i.DB.Find(&items)
+		res = r.DB.Find(&items)
 	} else if len(cmd) >= 3 && strings.Join(cmd[:2], " ") == "sort by" {
 		if len(cmd) > 3 && (cmd[3] == "asc" || cmd[3] == "desc") {
-			res = i.DB.Order(fmt.Sprintf("%s %s", cmd[2], cmd[3])).Find(&items)
+			res = r.DB.Order(fmt.Sprintf("%s %s", cmd[2], cmd[3])).Find(&items)
 		} else {
-			res = i.DB.Order(cmd[2]).Find(&items)
+			res = r.DB.Order(cmd[2]).Find(&items)
 		}
 	} else if len(cmd) >= 5 && strings.Join(cmd[:2], " ") == "filter by" {
-		res = i.DB.Where(fmt.Sprintf("%s %s '%s'", cmd[2], cmd[3], strings.Join(cmd[4:], " "))).Find(&items)
+		res = r.DB.Where(fmt.Sprintf("%s %s '%s'", cmd[2], cmd[3], strings.Join(cmd[4:], " "))).Find(&items)
 		if res.RowsAffected == 0 {
 			itemsList = noMatchFilter
 		}
@@ -122,7 +118,7 @@ func (i *Item) ListRecords(cmd []string) (string, error) {
 	return itemsList, nil
 }
 
-func (i *Item) UpdateRecord(params []string) (string, error) {
+func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	var (
 		msg string
 		res *gorm.DB
@@ -134,7 +130,7 @@ func (i *Item) UpdateRecord(params []string) (string, error) {
 			return "", err
 		}
 
-		res = i.DB.Model(&ItemRecord{}).Where("name = ?", params[0]).Updates(ItemRecord{Amount: float32(f), Unit: params[3]})
+		res = r.DB.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Amount: float32(f), Unit: params[3]})
 		if res.Error != nil {
 			return "", res.Error
 		}
@@ -144,12 +140,12 @@ func (i *Item) UpdateRecord(params []string) (string, error) {
 			return "", err
 		}
 
-		res = i.DB.Model(&ItemRecord{}).Where("name = ?", params[0]).Updates(ItemRecord{Price: float32(f), Currency: params[3]})
+		res = r.DB.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Price: float32(f), Currency: params[3]})
 		if res.Error != nil {
 			return "", res.Error
 		}
 	} else {
-		res = i.DB.Model(&ItemRecord{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
+		res = r.DB.Model(&Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
 		if res.Error != nil {
 			return "", res.Error
 		}
@@ -164,8 +160,8 @@ func (i *Item) UpdateRecord(params []string) (string, error) {
 	return msg, nil
 }
 
-func (i *Item) DeleteRecord(record string) (int64, error) {
-	res := i.DB.Where("name = ?", record).Delete(ItemRecord{})
+func (r *RecordDB) DeleteRecord(record string) (int64, error) {
+	res := r.DB.Where("name = ?", record).Delete(Item{})
 	if res.Error != nil {
 		return 0, res.Error
 	}
