@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
@@ -53,29 +55,60 @@ func main() {
 			continue
 		}
 
-		txt = update.Message.Text
-		switch oldMsg {
-		case "/additem":
-			res, err := record.Add(d, []string{txt})
+		// Read texts sent to the bot
+		if update.Message.Text != "" {
+			txt = update.Message.Text
+			switch oldMsg {
+			case "/additem":
+				res, err := record.Add(d, []string{txt})
+				if err != nil {
+					msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+				} else {
+					msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
+				}
+			case "/deleteitem":
+				res, err := record.Delete(d, []string{txt})
+				if err != nil {
+					msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+				} else {
+					msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
+				}
+			default:
+				cmds, err := d.CheckCommand(txt)
+				if err != nil {
+					msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+				} else {
+					msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
+				}
+			}
+		}
+
+		// Read documents sent to the bot
+		if update.Message.Document != nil {
+			url, err := bot.GetFileDirectURL(update.Message.Document.FileID)
+			if err != nil {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+			}
+
+			res, err := http.Get(url)
+			if err != nil {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+			}
+
+			defer res.Body.Close()
+			rcsv := csv.NewReader(res.Body)
+			contents, err := rcsv.ReadAll()
+			if err != nil {
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
+			}
+
+			res2, err := record.Import(d, contents)
 			if err != nil {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
 			} else {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res2)
 			}
-		case "/deleteitem":
-			res, err := record.Delete(d, []string{txt})
-			if err != nil {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
-			} else {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
-			}
-		default:
-			cmds, err := d.CheckCommand(txt)
-			if err != nil {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
-			} else {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
-			}
+
 		}
 
 		oldMsg = txt

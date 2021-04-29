@@ -24,6 +24,38 @@ type Item struct {
 	UpdatedAt   time.Time
 }
 
+func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
+	for _, row := range records {
+		amount, err := strconv.ParseFloat(row[2], 32)
+		if err != nil {
+			return "", err
+		}
+
+		calories, err := strconv.Atoi(row[4])
+		if err != nil {
+			return "", err
+		}
+
+		price, err := strconv.ParseFloat(row[6], 32)
+		if err != nil {
+			return "", err
+		}
+
+		expiration, err := time.Parse("2006/01/02", row[8])
+		if err != nil {
+			return "", err
+		}
+
+		rec := Item{Name: row[0], Description: row[1], Amount: float32(amount), Unit: row[3],
+			Calories: uint16(calories), Category: row[5], Price: float32(price), Currency: row[7], Expiration: expiration}
+		if err := r.DB.Create(&rec); err.Error != nil {
+			return "", err.Error
+		}
+	}
+
+	return "", nil
+}
+
 func (r *RecordDB) AddRecord(record string) error {
 	rec := Item{Name: record}
 	err := r.DB.Create(&rec)

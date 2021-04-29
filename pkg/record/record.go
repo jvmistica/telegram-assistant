@@ -13,6 +13,7 @@ type Record interface {
 	ListRecords(params []string) (string, error)
 	UpdateRecord(params []string) (string, error)
 	DeleteRecord(record string) (int64, error)
+	ImportRecords(records [][]string) (string, error)
 }
 
 type RecordDB struct {
@@ -105,5 +106,14 @@ func Delete(r Record, params []string) (string, error) {
 		msg = strings.ReplaceAll(deleteSuccess, "<item>", rec)
 	}
 
+	return msg, nil
+}
+
+func Import(r Record, records [][]string) (string, error) {
+	if _, err := r.ImportRecords(records); err != nil {
+		return "", err
+	}
+
+	msg := "Successfully imported items."
 	return msg, nil
 }
