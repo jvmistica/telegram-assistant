@@ -50,7 +50,4 @@ var (
 	itemNotExist  = "Item \"<item>\" does not exist in the inventory."
 	noMatchFilter = "There are no items matching that filter."
 	noItems       = "There are no items in your inventory."
-
-	noRecipes      = "There are no recipes in your book."
-	recipeNotExist = "Recipe \"<item>\" does not exist."
 )
