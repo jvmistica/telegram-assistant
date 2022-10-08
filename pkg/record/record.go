@@ -60,6 +60,7 @@ func List(r Record, params []string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		return msg, nil
 	}
 
 	msg, err = r.ListRecords(params)

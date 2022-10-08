@@ -48,6 +48,10 @@ func main() {
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	d := &record.RecordDB{DB: db}
 
 	for update := range updates {
