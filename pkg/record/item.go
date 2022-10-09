@@ -170,7 +170,9 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 		if res.Error != nil {
 			return "", res.Error
 		}
-	} else if params[1] == "price" && len(params) > 3 {
+	}
+
+	if params[1] == "price" && len(params) > 3 {
 		f, err := strconv.ParseFloat(params[2], 32)
 		if err != nil {
 			return "", err
@@ -180,11 +182,11 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 		if res.Error != nil {
 			return "", res.Error
 		}
-	} else {
-		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Update(params[1], strings.Join(params[2:], " "))
-		if res.Error != nil {
-			return "", res.Error
-		}
+	}
+
+	res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Update(params[1], strings.Join(params[2:], " "))
+	if res.Error != nil {
+		return "", res.Error
 	}
 
 	if res.RowsAffected == 0 {
