@@ -1,15 +1,19 @@
 package record
 
+const (
+	listItems = "/listitems - list items in your inventory\n"
+)
+
 var (
 	startMsg = "Welcome. Here's a list of my commands:\n\n" +
-		"/listitems - list items in your inventory\n" +
+		listItems +
 		"/showitem - show an item's details\n" +
 		"/additem - add an item\n" +
 		"/updateitem - update an item\n" +
 		"/deleteitem - delete an item\n"
 
 	invalidMsg = "That's not a valid command. Here's a list of valid commands:\n\n" +
-		"/listitems - list items in your inventory\n" +
+		listItems +
 		"/showitem - show an item's details\n" +
 		"/additem - add an item\n" +
 		"/updateitem - update an item\n" +
@@ -17,7 +21,7 @@ var (
 
 	invalidListMsg = "That's not a valid command. Here's a list of valid commands:\n\n" +
 		"*List DB*\n" +
-		"/listitems - list items in your inventory\n" +
+		listItems +
 		"/listitems sort by _field_ - sort list (ascending)\n" +
 		"/listitems sort by _field_ desc - sort list (descending)\n" +
 		"/listitems filter by _field_ = _value_ - filter items in your inventory\n" +
