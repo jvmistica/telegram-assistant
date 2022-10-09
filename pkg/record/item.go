@@ -11,6 +11,7 @@ import (
 
 const (
 	filterByName = "name = ?"
+	itemTag      = "<item>"
 )
 
 type Item struct {
@@ -82,7 +83,7 @@ func (r *RecordDB) ShowRecord(record string) (string, error) {
 	}
 
 	if res.RowsAffected == 0 {
-		return strings.ReplaceAll(itemNotExist, "<item>", record), nil
+		return strings.ReplaceAll(itemNotExist, itemTag, record), nil
 	}
 
 	category := "_Uncategorized_"
@@ -188,9 +189,9 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	}
 
 	if res.RowsAffected == 0 {
-		msg = strings.ReplaceAll(itemNotExist, "<item>", params[0])
+		msg = strings.ReplaceAll(itemNotExist, itemTag, params[0])
 	} else {
-		msg = strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", params[0]), "<field>", params[1])
+		msg = strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, params[0]), "<field>", params[1])
 	}
 
 	return msg, nil

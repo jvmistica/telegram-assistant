@@ -31,7 +31,7 @@ func Add(r Record, params []string) (string, error) {
 		return "", err
 	}
 
-	msg := strings.ReplaceAll(addSuccess, "<item>", rec)
+	msg := strings.ReplaceAll(addSuccess, itemTag, rec)
 	return msg, nil
 }
 
@@ -102,9 +102,9 @@ func Delete(r Record, params []string) (string, error) {
 	}
 
 	if rows == 0 {
-		msg = strings.ReplaceAll(itemNotExist, "<item>", rec)
+		msg = strings.ReplaceAll(itemNotExist, itemTag, rec)
 	} else {
-		msg = strings.ReplaceAll(deleteSuccess, "<item>", rec)
+		msg = strings.ReplaceAll(deleteSuccess, itemTag, rec)
 	}
 
 	return msg, nil
