@@ -19,14 +19,39 @@ var (
 	msg    tgbotapi.MessageConfig
 	err    error
 	db     *gorm.DB
+	bot    *tgbotapi.BotAPI
 )
 
-func main() {
+func init() {
 	host := os.Getenv("POSTGRES_HOST")
+	if host == "" {
+		log.Fatal("missing environment variable POSTGRES_HOST")
+	}
+
 	port := os.Getenv("POSTGRES_PORT")
+	if port == "" {
+		log.Fatal("missing environment variable POSTGRES_PORT")
+	}
+
 	user := os.Getenv("POSTGRES_USER")
+	if user == "" {
+		log.Fatal("missing environment variable POSTGRES_USER")
+	}
+
 	password := os.Getenv("POSTGRES_PASS")
+	if password == "" {
+		log.Fatal("missing environment variable POSTGRES_PASS")
+	}
+
 	database := os.Getenv("POSTGRES_DB")
+	if database == "" {
+		log.Fatal("missing environment variable POSTGRES_DB")
+	}
+
+	botToken := os.Getenv("BOT_TOKEN")
+	if botToken == "" {
+		log.Fatal("missing environment variable BOT_TOKEN")
+	}
 
 	// Connect to the database
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
@@ -38,12 +63,14 @@ func main() {
 
 	db.AutoMigrate(&record.Item{})
 
-	// Listen to messages sent to Telegram bot
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
+	bot, err = tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
+}
 
+func main() {
+	// Listen to messages sent to Telegram bot
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
