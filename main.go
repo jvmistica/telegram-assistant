@@ -108,7 +108,6 @@ func main() {
 			}
 		}
 
-		// TODO: Re-implement this
 		// // Read documents sent to the bot
 		// if update.Message.Document != nil {
 		// 	url, err := bot.GetFileDirectURL(update.Message.Document.FileID)
