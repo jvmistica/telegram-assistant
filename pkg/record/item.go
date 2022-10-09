@@ -121,24 +121,22 @@ func (r *RecordDB) sortList(field, sort string, items *[]Item) *gorm.DB {
 }
 
 func (r *RecordDB) ListRecords(cmd []string) (string, error) {
-	var (
-		items     []Item
-		itemsList string
-		res       *gorm.DB
-	)
+	if len(cmd) != 0 && len(cmd) != 4 && len(cmd) != 5 {
+		return invalidListMsg, nil
+	}
 
+	var items []Item
+	var res *gorm.DB
 	if len(cmd) == 0 {
 		res = r.DB.Find(&items)
-		if res.RowsAffected == 0 {
-			return noItems, nil
-		}
 	}
 
 	if len(cmd) == 4 && strings.Join(cmd[:2], " ") == "sort by" {
 		res = r.sortList(cmd[2], cmd[3], &items)
-		if res.RowsAffected == 0 {
-			return noItems, nil
-		}
+	}
+
+	if res.RowsAffected == 0 {
+		return noItems, nil
 	}
 
 	if len(cmd) == 5 && strings.Join(cmd[:2], " ") == "filter by" {
@@ -148,19 +146,16 @@ func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 		}
 	}
 
-	if len(cmd) != 0 && len(cmd) != 4 && len(cmd) != 6 {
-		return invalidListMsg, nil
-	}
+	return r.getItemList(items), nil
+}
 
+func (r *RecordDB) getItemList(items []Item) string {
+	var itemsList string
 	for _, item := range items {
 		itemsList += item.Name + "\n"
 	}
 
-	if res != nil && res.Error != nil {
-		return "", res.Error
-	}
-
-	return itemsList, nil
+	return itemsList
 }
 
 func (r *RecordDB) UpdateRecord(params []string) (string, error) {
