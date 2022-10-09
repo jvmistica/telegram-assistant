@@ -14,12 +14,12 @@ import (
 )
 
 var (
+	bot    *tgbotapi.BotAPI
+	db     *gorm.DB
+	err    error
+	msg    tgbotapi.MessageConfig
 	oldMsg string
 	txt    string
-	msg    tgbotapi.MessageConfig
-	err    error
-	db     *gorm.DB
-	bot    *tgbotapi.BotAPI
 )
 
 func init() {

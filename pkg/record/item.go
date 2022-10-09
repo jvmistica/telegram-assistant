@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	filterByName = "name = ?"
-	itemTag      = "<item>"
+	defaultTimeFormat = "2006/01/02"
+	filterByName      = "name = ?"
+	itemTag           = "<item>"
 )
 
 type Item struct {
@@ -46,7 +47,7 @@ func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
 			return "", err
 		}
 
-		expiration, err := time.Parse("2006/01/02", row[8])
+		expiration, err := time.Parse(defaultTimeFormat, row[8])
 		if err != nil {
 			return "", err
 		}
@@ -97,7 +98,7 @@ func (r *RecordDB) ShowRecord(record string) (string, error) {
 	}
 
 	exp := item.Expiration
-	expiration := exp.Format("2006/01/02")
+	expiration := exp.Format(defaultTimeFormat)
 	if expiration[0] == '0' {
 		expiration = "_Not set_"
 	}
