@@ -109,6 +109,17 @@ func (r *RecordDB) ShowRecord(record string) (string, error) {
 	return details, nil
 }
 
+func (r *RecordDB) sortList(field, sort string, items *[]Item) *gorm.DB {
+	var res *gorm.DB
+	if sort == "asc" || sort == "desc" {
+		res = r.DB.Order(fmt.Sprintf("%s %s", field, sort)).Find(items)
+	} else {
+		res = r.DB.Order(field).Find(&items)
+	}
+
+	return res
+}
+
 func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	var (
 		items     []Item
@@ -118,39 +129,35 @@ func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 
 	if len(cmd) == 0 {
 		res = r.DB.Find(&items)
-	} else if len(cmd) >= 3 && strings.Join(cmd[:2], " ") == "sort by" {
-		if len(cmd) > 3 && (cmd[3] == "asc" || cmd[3] == "desc") {
-			res = r.DB.Order(fmt.Sprintf("%s %s", cmd[2], cmd[3])).Find(&items)
-		} else {
-			res = r.DB.Order(cmd[2]).Find(&items)
+		if res.RowsAffected == 0 {
+			return noItems, nil
 		}
-	} else if len(cmd) >= 5 && strings.Join(cmd[:2], " ") == "filter by" {
+	}
+
+	if len(cmd) == 4 && strings.Join(cmd[:2], " ") == "sort by" {
+		res = r.sortList(cmd[2], cmd[3], &items)
+		if res.RowsAffected == 0 {
+			return noItems, nil
+		}
+	}
+
+	if len(cmd) == 5 && strings.Join(cmd[:2], " ") == "filter by" {
 		res = r.DB.Where(fmt.Sprintf("%s %s '%s'", cmd[2], cmd[3], strings.Join(cmd[4:], " "))).Find(&items)
 		if res.RowsAffected == 0 {
-			itemsList = noMatchFilter
+			return noMatchFilter, nil
 		}
-	} else {
-		itemsList = invalidListMsg
+	}
+
+	if len(cmd) != 0 && len(cmd) != 4 && len(cmd) != 6 {
+		return invalidListMsg, nil
+	}
+
+	for _, item := range items {
+		itemsList += item.Name + "\n"
 	}
 
 	if res != nil && res.Error != nil {
 		return "", res.Error
-	}
-
-	for _, item := range items {
-		if len(cmd) >= 3 && strings.Join(cmd[:2], " ") == "sort by" {
-			if item.Expiration.Year() == 0 {
-				itemsList += fmt.Sprintf("Not Available - %s\n", item.Name)
-			} else {
-				itemsList += fmt.Sprintf("%s %d - %s\n", item.Expiration.Month().String()[:3], item.Expiration.Year(), item.Name)
-			}
-		} else {
-			itemsList += item.Name + "\n"
-		}
-	}
-
-	if itemsList == "" {
-		itemsList = noItems
 	}
 
 	return itemsList, nil
