@@ -9,6 +9,10 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	filterByName = "name = ?"
+)
+
 type Item struct {
 	ID          uint
 	Name        string
@@ -72,7 +76,7 @@ func (r *RecordDB) ShowRecord(record string) (string, error) {
 		details string
 	)
 
-	res := r.DB.Where("name = ?", record).Find(&item)
+	res := r.DB.Where(filterByName, record).Find(&item)
 	if res.Error != nil {
 		return "", res.Error
 	}
@@ -162,7 +166,7 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 			return "", err
 		}
 
-		res = r.DB.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Amount: float32(f), Unit: params[3]})
+		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Amount: float32(f), Unit: params[3]})
 		if res.Error != nil {
 			return "", res.Error
 		}
@@ -172,12 +176,12 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 			return "", err
 		}
 
-		res = r.DB.Model(&Item{}).Where("name = ?", params[0]).Updates(Item{Price: float32(f), Currency: params[3]})
+		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Price: float32(f), Currency: params[3]})
 		if res.Error != nil {
 			return "", res.Error
 		}
 	} else {
-		res = r.DB.Model(&Item{}).Where("name = ?", params[0]).Update(params[1], strings.Join(params[2:], " "))
+		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Update(params[1], strings.Join(params[2:], " "))
 		if res.Error != nil {
 			return "", res.Error
 		}
@@ -193,7 +197,7 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 }
 
 func (r *RecordDB) DeleteRecord(record string) (int64, error) {
-	res := r.DB.Where("name = ?", record).Delete(Item{})
+	res := r.DB.Where(filterByName, record).Delete(Item{})
 	if res.Error != nil {
 		return 0, res.Error
 	}
