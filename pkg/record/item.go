@@ -159,11 +159,7 @@ func (r *RecordDB) getItemList(items []Item) string {
 }
 
 func (r *RecordDB) UpdateRecord(params []string) (string, error) {
-	var (
-		msg string
-		res *gorm.DB
-	)
-
+	var res *gorm.DB
 	if params[1] == "amount" && len(params) > 3 {
 		f, err := strconv.ParseFloat(params[2], 32)
 		if err != nil {
@@ -192,12 +188,10 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	}
 
 	if res.RowsAffected == 0 {
-		msg = strings.ReplaceAll(itemNotExist, itemTag, params[0])
-	} else {
-		msg = strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, params[0]), "<field>", params[1])
+		return strings.ReplaceAll(itemNotExist, itemTag, params[0]), nil
 	}
 
-	return msg, nil
+	return strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, params[0]), "<field>", params[1]), nil
 }
 
 func (r *RecordDB) DeleteRecord(record string) (int64, error) {
