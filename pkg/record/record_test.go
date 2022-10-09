@@ -11,6 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	fieldTag = "<field>"
+)
+
 func SetupTests() *gorm.DB {
 	mocket.Catcher.Register()
 	db, _ := gorm.Open(postgres.New(postgres.Config{
@@ -32,11 +36,11 @@ func TestAdd(t *testing.T) {
 		},
 		{
 			params:   []string{"melon"},
-			expected: strings.ReplaceAll(addSuccess, "<item>", "melon"),
+			expected: strings.ReplaceAll(addSuccess, itemTag, "melon"),
 		},
 		{
 			params:   []string{"coconut", "pie"},
-			expected: strings.ReplaceAll(addSuccess, "<item>", "coconut pie"),
+			expected: strings.ReplaceAll(addSuccess, itemTag, "coconut pie"),
 		},
 	}
 
@@ -56,7 +60,7 @@ func TestShow(t *testing.T) {
 		mocket.Catcher.Reset().NewMock().WithReply(nil)
 		actual, err := Show(i, []string{"milk"})
 		assert.Nil(t, err)
-		assert.Equal(t, strings.ReplaceAll(itemNotExist, "<item>", "milk"), actual)
+		assert.Equal(t, strings.ReplaceAll(itemNotExist, itemTag, "milk"), actual)
 	})
 
 	t.Run("no category", func(t *testing.T) {
@@ -119,25 +123,25 @@ func TestUpdate(t *testing.T) {
 		},
 		{
 			params:   []string{"melon", "category", "fruit"},
-			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "category"),
+			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, "melon"), fieldTag, "category"),
 			wantErr:  false,
 			noRows:   false,
 		},
 		{
 			params:   []string{"melon", "amount", "2"},
-			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "amount"),
+			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, "melon"), fieldTag, "amount"),
 			wantErr:  false,
 			noRows:   false,
 		},
 		{
 			params:   []string{"melon", "price", "30.50"},
-			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, "<item>", "melon"), "<field>", "price"),
+			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, "melon"), fieldTag, "price"),
 			wantErr:  false,
 			noRows:   false,
 		},
 		{
 			params:   []string{"egg", "amount", "12"},
-			expected: strings.ReplaceAll(itemNotExist, "<item>", "egg"),
+			expected: strings.ReplaceAll(itemNotExist, itemTag, "egg"),
 			wantErr:  false,
 			noRows:   true,
 		},
@@ -191,17 +195,17 @@ func TestDelete(t *testing.T) {
 		},
 		{
 			params:   []string{"flour"},
-			expected: strings.ReplaceAll(deleteSuccess, "<item>", "flour"),
+			expected: strings.ReplaceAll(deleteSuccess, itemTag, "flour"),
 			noRows:   false,
 		},
 		{
 			params:   []string{"almond", "flour"},
-			expected: strings.ReplaceAll(deleteSuccess, "<item>", "almond flour"),
+			expected: strings.ReplaceAll(deleteSuccess, itemTag, "almond flour"),
 			noRows:   false,
 		},
 		{
 			params:   []string{"milk"},
-			expected: strings.ReplaceAll(itemNotExist, "<item>", "milk"),
+			expected: strings.ReplaceAll(itemNotExist, itemTag, "milk"),
 			noRows:   true,
 		},
 	}
