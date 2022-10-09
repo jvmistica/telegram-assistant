@@ -99,7 +99,6 @@ func main() {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
 			}
 
-			defer res.Body.Close()
 			rcsv := csv.NewReader(res.Body)
 			contents, err := rcsv.ReadAll()
 			if err != nil {

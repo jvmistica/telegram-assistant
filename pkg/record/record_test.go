@@ -65,7 +65,7 @@ func TestShow(t *testing.T) {
 		mocket.Catcher.Reset().NewMock().WithReply(records)
 		actual, err := Show(i, []string{"egg"})
 		assert.Nil(t, err)
-		assert.Equal(t, "*Egg* (_Uncategorized_)\n\nSuper tasty and cheap\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
+		assert.Equal(t, "*egg* (_Uncategorized_)\n\nSuper tasty and cheap\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
 	})
 
 	t.Run("no description", func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestShow(t *testing.T) {
 		mocket.Catcher.Reset().NewMock().WithReply(records)
 		actual, err := Show(i, []string{"egg"})
 		assert.Nil(t, err)
-		assert.Equal(t, "*Egg* (Protein)\n\n_No description_\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
+		assert.Equal(t, "*egg* (protein)\n\n_No description_\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
 	})
 
 	t.Run("no expiration", func(t *testing.T) {
@@ -83,7 +83,7 @@ func TestShow(t *testing.T) {
 		mocket.Catcher.Reset().NewMock().WithReply(records)
 		actual, err := Show(i, []string{"egg"})
 		assert.Nil(t, err)
-		assert.Equal(t, "*Strawberry Milk* (Fruit)\n\nFruity\nAmount: 2.00 cup(s)\nPrice: 98.10 PHP\nExpiration: _Not set_", actual)
+		assert.Equal(t, "*strawberry milk* (fruit)\n\nFruity\nAmount: 2.00 cup(s)\nPrice: 98.10 PHP\nExpiration: _Not set_", actual)
 	})
 }
 

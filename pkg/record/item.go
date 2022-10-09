@@ -83,7 +83,7 @@ func (r *RecordDB) ShowRecord(record string) (string, error) {
 
 	category := "_Uncategorized_"
 	if item.Category != "" {
-		category = strings.Title(item.Category)
+		category = item.Category
 	}
 
 	description := "_No description_"
@@ -98,7 +98,7 @@ func (r *RecordDB) ShowRecord(record string) (string, error) {
 	}
 
 	details = fmt.Sprintf("*%s* (%s)\n\n%s\nAmount: %.2f %s\nPrice: %.2f %s\nExpiration: %s",
-		strings.Title(item.Name), category, description, item.Amount, item.Unit, item.Price, item.Currency, expiration)
+		item.Name, category, description, item.Amount, item.Unit, item.Price, item.Currency, expiration)
 
 	return details, nil
 }
