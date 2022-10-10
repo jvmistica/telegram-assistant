@@ -44,9 +44,9 @@ func TestAdd(t *testing.T) {
 		},
 	}
 
-	i := &RecordDB{DB: db}
+	r := &RecordDB{DB: db}
 	for _, tt := range tests {
-		actual, err := Add(i, tt.params)
+		actual, err := r.Add(tt.params)
 		assert.Nil(t, err)
 		assert.Equal(t, tt.expected, actual)
 	}
@@ -54,11 +54,11 @@ func TestAdd(t *testing.T) {
 
 func TestShow(t *testing.T) {
 	db := SetupTests()
-	i := &RecordDB{DB: db}
+	r := &RecordDB{DB: db}
 
 	t.Run("no items", func(t *testing.T) {
 		mocket.Catcher.Reset().NewMock().WithReply(nil)
-		actual, err := Show(i, []string{"milk"})
+		actual, err := r.Show([]string{"milk"})
 		assert.Nil(t, err)
 		assert.Equal(t, strings.ReplaceAll(itemNotExist, itemTag, "milk"), actual)
 	})
@@ -67,7 +67,7 @@ func TestShow(t *testing.T) {
 		records := []map[string]interface{}{{"name": "egg", "description": "Super tasty and cheap", "amount": 12, "unit": "piece(s)",
 			"price": 98.50, "currency": "PHP", "expiration": time.Date(2021, 2, 26, 20, 34, 58, 651387237, time.UTC)}}
 		mocket.Catcher.Reset().NewMock().WithReply(records)
-		actual, err := Show(i, []string{"egg"})
+		actual, err := r.Show([]string{"egg"})
 		assert.Nil(t, err)
 		assert.Equal(t, "*egg* (_Uncategorized_)\n\nSuper tasty and cheap\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
 	})
@@ -76,7 +76,7 @@ func TestShow(t *testing.T) {
 		records := []map[string]interface{}{{"name": "egg", "amount": 12, "unit": "piece(s)", "category": "protein", "price": 98.50,
 			"currency": "PHP", "expiration": time.Date(2021, 2, 26, 20, 34, 58, 651387237, time.UTC)}}
 		mocket.Catcher.Reset().NewMock().WithReply(records)
-		actual, err := Show(i, []string{"egg"})
+		actual, err := r.Show([]string{"egg"})
 		assert.Nil(t, err)
 		assert.Equal(t, "*egg* (protein)\n\n_No description_\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
 	})
@@ -85,7 +85,7 @@ func TestShow(t *testing.T) {
 		records := []map[string]interface{}{{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
 			"category": "fruit", "price": 98.10, "currency": "PHP"}}
 		mocket.Catcher.Reset().NewMock().WithReply(records)
-		actual, err := Show(i, []string{"egg"})
+		actual, err := r.Show([]string{"egg"})
 		assert.Nil(t, err)
 		assert.Equal(t, "*strawberry milk* (fruit)\n\nFruity\nAmount: 2.00 cup(s)\nPrice: 98.10 PHP\nExpiration: _Not set_", actual)
 	})
@@ -93,12 +93,12 @@ func TestShow(t *testing.T) {
 
 func TestList(t *testing.T) {
 	db := SetupTests()
-	i := &RecordDB{DB: db}
+	r := &RecordDB{DB: db}
 
 	t.Run("invalid arguments", func(t *testing.T) {
 		params := []string{"sort", "sort by", "filter", "filter by", "something made-up"}
 		for _, p := range params {
-			actual, err := List(i, []string{p})
+			actual, err := r.List([]string{p})
 			assert.Nil(t, err)
 			assert.Equal(t, invalidListMsg, actual)
 		}
@@ -107,7 +107,7 @@ func TestList(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	db := SetupTests()
-	i := &RecordDB{DB: db}
+	r := &RecordDB{DB: db}
 
 	tests := []struct {
 		params   []string
@@ -162,17 +162,17 @@ func TestUpdate(t *testing.T) {
 	for _, tt := range tests {
 		if tt.wantErr {
 			mocket.Catcher.Reset().NewMock().WithRowsNum(0)
-			actual, err := Update(i, tt.params)
+			actual, err := r.Update(tt.params)
 			assert.Equal(t, "", actual)
 			assert.Equal(t, tt.expected, err.Error())
 		} else if tt.noRows {
 			mocket.Catcher.Reset().NewMock().WithRowsNum(0)
-			actual, err := Update(i, tt.params)
+			actual, err := r.Update(tt.params)
 			assert.Nil(t, err)
 			assert.Equal(t, tt.expected, actual)
 		} else {
 			mocket.Catcher.Reset().NewMock().WithRowsNum(1)
-			actual, err := Update(i, tt.params)
+			actual, err := r.Update(tt.params)
 			assert.Nil(t, err)
 			assert.Equal(t, tt.expected, actual)
 		}
@@ -181,7 +181,7 @@ func TestUpdate(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	db := SetupTests()
-	i := &RecordDB{DB: db}
+	r := &RecordDB{DB: db}
 
 	tests := []struct {
 		params   []string
@@ -213,12 +213,12 @@ func TestDelete(t *testing.T) {
 	for _, tt := range tests {
 		if tt.noRows {
 			mocket.Catcher.Reset().NewMock().WithRowsNum(0)
-			actual, err := Delete(i, tt.params)
+			actual, err := r.Delete(tt.params)
 			assert.Nil(t, err)
 			assert.Equal(t, tt.expected, actual)
 		} else {
 			mocket.Catcher.Reset().NewMock().WithRowsNum(1)
-			actual, err := Delete(i, tt.params)
+			actual, err := r.Delete(tt.params)
 			assert.Nil(t, err)
 			assert.Equal(t, tt.expected, actual)
 		}

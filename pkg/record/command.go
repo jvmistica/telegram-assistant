@@ -1,8 +1,11 @@
 package record
 
-import "strings"
+import (
+	"strings"
+)
 
-// CheckCommand checks if the command is valid and returns the appropriate response
+// CheckCommand checks if the command is valid and
+// returns the appropriate response
 func (r *RecordDB) CheckCommand(cmd string) (string, error) {
 	var (
 		msg    string
@@ -19,15 +22,15 @@ func (r *RecordDB) CheckCommand(cmd string) (string, error) {
 	case "/start":
 		msg = startMsg
 	case "/listitems":
-		msg, err = List(r, params)
+		msg, err = r.List(params)
 	case "/showitem":
-		msg, err = Show(r, params)
+		msg, err = r.Show(params)
 	case "/additem":
-		msg, err = Add(r, params)
+		msg, err = r.Add(params)
 	case "/updateitem":
-		msg, err = Update(r, params)
+		msg, err = r.Update(params)
 	case "/deleteitem":
-		msg, err = Delete(r, params)
+		msg, err = r.Delete(params)
 	default:
 		msg = invalidMsg
 	}

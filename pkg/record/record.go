@@ -20,7 +20,7 @@ type RecordDB struct {
 	DB *gorm.DB
 }
 
-func Add(r Record, params []string) (string, error) {
+func (r *RecordDB) Add(params []string) (string, error) {
 	if len(params) == 0 {
 		return addChoose, nil
 	}
@@ -35,7 +35,7 @@ func Add(r Record, params []string) (string, error) {
 	return msg, nil
 }
 
-func Show(r Record, params []string) (string, error) {
+func (r *RecordDB) Show(params []string) (string, error) {
 	if len(params) == 0 {
 		return addChoose, nil
 	}
@@ -49,7 +49,7 @@ func Show(r Record, params []string) (string, error) {
 	return msg, nil
 }
 
-func List(r Record, params []string) (string, error) {
+func (r *RecordDB) List(params []string) (string, error) {
 	var (
 		msg string
 		err error
@@ -71,7 +71,7 @@ func List(r Record, params []string) (string, error) {
 	return msg, nil
 }
 
-func Update(r Record, params []string) (string, error) {
+func (r *RecordDB) Update(params []string) (string, error) {
 	if len(params) == 0 {
 		return updateChoose, nil
 	}
@@ -88,7 +88,7 @@ func Update(r Record, params []string) (string, error) {
 	return msg, nil
 }
 
-func Delete(r Record, params []string) (string, error) {
+func (r *RecordDB) Delete(params []string) (string, error) {
 	var msg string
 
 	if len(params) == 0 {
@@ -110,7 +110,7 @@ func Delete(r Record, params []string) (string, error) {
 	return msg, nil
 }
 
-func Import(r Record, records [][]string) (string, error) {
+func (r *RecordDB) Import(records [][]string) (string, error) {
 	if _, err := r.ImportRecords(records); err != nil {
 		return "", err
 	}

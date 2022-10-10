@@ -14,8 +14,6 @@ var (
 )
 
 func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) {
-	d := &RecordDB{DB: db}
-
 	for update := range updates {
 		if update.Message == nil {
 			continue
@@ -24,7 +22,7 @@ func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) 
 		// Read texts sent to the bot
 		if update.Message.Text != "" {
 			currentMsg = update.Message.Text
-			msg = processMessage(prevMsg, d, update.Message.Chat.ID)
+			msg = processMessage(prevMsg, db, update.Message.Chat.ID)
 		}
 
 		prevMsg = currentMsg
@@ -33,9 +31,10 @@ func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) 
 	}
 }
 
-func processMessage(prevMsg string, d *RecordDB, chatID int64) tgbotapi.MessageConfig {
+func processMessage(prevMsg string, db *gorm.DB, chatID int64) tgbotapi.MessageConfig {
+	r := &RecordDB{DB: db}
 	if prevMsg == "/additem" {
-		result, err := Add(d, []string{currentMsg})
+		result, err := r.Add([]string{currentMsg})
 		if err != nil {
 			return tgbotapi.NewMessage(chatID, fmt.Sprintf("%s", err))
 		}
@@ -43,14 +42,14 @@ func processMessage(prevMsg string, d *RecordDB, chatID int64) tgbotapi.MessageC
 	}
 
 	if prevMsg == "/deleteitem" {
-		result, err := Delete(d, []string{currentMsg})
+		result, err := r.Delete([]string{currentMsg})
 		if err != nil {
 			return tgbotapi.NewMessage(chatID, fmt.Sprintf("%s", err))
 		}
 		return tgbotapi.NewMessage(chatID, result)
 	}
 
-	cmds, err := d.CheckCommand(currentMsg)
+	cmds, err := r.CheckCommand(currentMsg)
 	if err != nil {
 		return tgbotapi.NewMessage(chatID, fmt.Sprintf("%s", err))
 	}
