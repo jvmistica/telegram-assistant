@@ -12,12 +12,9 @@ import (
 )
 
 var (
-	bot    *tgbotapi.BotAPI
-	db     *gorm.DB
-	err    error
-	msg    tgbotapi.MessageConfig
-	oldMsg string
-	txt    string
+	bot *tgbotapi.BotAPI
+	db  *gorm.DB
+	err error
 )
 
 func init() {
@@ -69,74 +66,12 @@ func init() {
 
 func main() {
 	// Listen to messages sent to Telegram bot
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+	config := tgbotapi.NewUpdate(0)
+	config.Timeout = 60
 
-	updates, err := bot.GetUpdatesChan(u)
+	updates, err := bot.GetUpdatesChan(config)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	d := &record.RecordDB{DB: db}
-
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-
-		// Read texts sent to the bot
-		if update.Message.Text != "" {
-			txt = update.Message.Text
-			var res string
-			var cmds string
-			var err2 error
-
-			switch oldMsg {
-			case "/additem":
-				res, err2 = record.Add(d, []string{txt})
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
-			case "/deleteitem":
-				res, err2 = record.Delete(d, []string{txt})
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, res)
-			default:
-				cmds, err2 = d.CheckCommand(txt)
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, cmds)
-			}
-
-			if err2 != nil {
-				msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err2))
-			}
-		}
-
-		// // Read documents sent to the bot
-		// if update.Message.Document != nil {
-		// 	url, err := bot.GetFileDirectURL(update.Message.Document.FileID)
-		// 	if err != nil {
-		// 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
-		// 	}
-
-		// 	res, err := http.Get(url)
-		// 	if err != nil {
-		// 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
-		// 	}
-
-		// 	rcsv := csv.NewReader(res.Body)
-		// 	contents, err := rcsv.ReadAll()
-		// 	if err != nil {
-		// 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
-		// 	}
-
-		// 	res2, err := record.Import(d, contents)
-		// 	if err != nil {
-		// 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("%s", err))
-		// 	} else {
-		// 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, res2)
-		// 	}
-
-		// }
-
-		oldMsg = txt
-		msg.ParseMode = "Markdown"
-		bot.Send(msg)
-	}
+	record.Listen(updates, bot, db)
 }
