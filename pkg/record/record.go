@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// Record is an interface that can be used for
+// performing record transactions
 type Record interface {
 	AddRecord(record string) error
 	ShowRecord(record string) (string, error)
@@ -16,10 +18,13 @@ type Record interface {
 	ImportRecords(records [][]string) (string, error)
 }
 
+// RecordDB contains the database instance
+// used in performing record transactions
 type RecordDB struct {
 	DB *gorm.DB
 }
 
+// Add inserts a new record into a table
 func (r *RecordDB) Add(params []string) (string, error) {
 	if len(params) == 0 {
 		return addChoose, nil
@@ -35,6 +40,7 @@ func (r *RecordDB) Add(params []string) (string, error) {
 	return msg, nil
 }
 
+// Show returns the details of a specific record
 func (r *RecordDB) Show(params []string) (string, error) {
 	if len(params) == 0 {
 		return addChoose, nil
@@ -49,6 +55,7 @@ func (r *RecordDB) Show(params []string) (string, error) {
 	return msg, nil
 }
 
+// List returns a list of records from a table
 func (r *RecordDB) List(params []string) (string, error) {
 	var (
 		msg string
@@ -71,6 +78,7 @@ func (r *RecordDB) List(params []string) (string, error) {
 	return msg, nil
 }
 
+// Update updates a specific record
 func (r *RecordDB) Update(params []string) (string, error) {
 	if len(params) == 0 {
 		return updateChoose, nil
@@ -88,6 +96,7 @@ func (r *RecordDB) Update(params []string) (string, error) {
 	return msg, nil
 }
 
+// Delete deletes a specific record
 func (r *RecordDB) Delete(params []string) (string, error) {
 	var msg string
 
@@ -110,6 +119,7 @@ func (r *RecordDB) Delete(params []string) (string, error) {
 	return msg, nil
 }
 
+// Import imports a list of records into a table
 func (r *RecordDB) Import(records [][]string) (string, error) {
 	if _, err := r.ImportRecords(records); err != nil {
 		return "", err

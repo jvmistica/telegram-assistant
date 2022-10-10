@@ -15,6 +15,7 @@ const (
 	itemTag           = "<item>"
 )
 
+// Item is the model used for item-specific records
 type Item struct {
 	ID          uint
 	Name        string
@@ -30,38 +31,7 @@ type Item struct {
 	UpdatedAt   time.Time
 }
 
-func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
-	for _, row := range records {
-		amount, err := strconv.ParseFloat(row[2], 32)
-		if err != nil {
-			return "", err
-		}
-
-		calories, err := strconv.Atoi(row[4])
-		if err != nil {
-			return "", err
-		}
-
-		price, err := strconv.ParseFloat(row[6], 32)
-		if err != nil {
-			return "", err
-		}
-
-		expiration, err := time.Parse(defaultTimeFormat, row[8])
-		if err != nil {
-			return "", err
-		}
-
-		rec := Item{Name: row[0], Description: row[1], Amount: float32(amount), Unit: row[3],
-			Calories: uint16(calories), Category: row[5], Price: float32(price), Currency: row[7], Expiration: expiration}
-		if err := r.DB.Create(&rec); err.Error != nil {
-			return "", err.Error
-		}
-	}
-
-	return "", nil
-}
-
+// AddRecord inserts a new record into the "item" table
 func (r *RecordDB) AddRecord(record string) error {
 	rec := Item{Name: record}
 	err := r.DB.Create(&rec)
@@ -72,6 +42,7 @@ func (r *RecordDB) AddRecord(record string) error {
 	return nil
 }
 
+// ShowRecord returns the details of a specific "item" record
 func (r *RecordDB) ShowRecord(record string) (string, error) {
 	var (
 		item    Item
@@ -109,17 +80,7 @@ func (r *RecordDB) ShowRecord(record string) (string, error) {
 	return details, nil
 }
 
-func (r *RecordDB) sortList(field, sort string, items *[]Item) *gorm.DB {
-	var res *gorm.DB
-	if sort == "asc" || sort == "desc" {
-		res = r.DB.Order(fmt.Sprintf("%s %s", field, sort)).Find(items)
-	} else {
-		res = r.DB.Order(field).Find(&items)
-	}
-
-	return res
-}
-
+// ListRecords returns a list of records from the "item" table
 func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	if len(cmd) != 0 && len(cmd) != 4 && len(cmd) != 5 {
 		return invalidListMsg, nil
@@ -149,15 +110,7 @@ func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	return r.getItemList(items), nil
 }
 
-func (r *RecordDB) getItemList(items []Item) string {
-	var itemsList string
-	for _, item := range items {
-		itemsList += item.Name + "\n"
-	}
-
-	return itemsList
-}
-
+// UpdateRecord updates a specific "item" record
 func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	var res *gorm.DB
 	if params[1] == "amount" && len(params) > 3 {
@@ -196,6 +149,7 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	return strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, params[0]), "<field>", params[1]), nil
 }
 
+// DeleteRecord deletes a specific "item" record
 func (r *RecordDB) DeleteRecord(record string) (int64, error) {
 	res := r.DB.Where(filterByName, record).Delete(Item{})
 	if res.Error != nil {
@@ -203,4 +157,59 @@ func (r *RecordDB) DeleteRecord(record string) (int64, error) {
 	}
 
 	return res.RowsAffected, nil
+}
+
+// ImportRecords imports a list of records into the "item" table
+func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
+	for _, row := range records {
+		amount, err := strconv.ParseFloat(row[2], 32)
+		if err != nil {
+			return "", err
+		}
+
+		calories, err := strconv.Atoi(row[4])
+		if err != nil {
+			return "", err
+		}
+
+		price, err := strconv.ParseFloat(row[6], 32)
+		if err != nil {
+			return "", err
+		}
+
+		expiration, err := time.Parse(defaultTimeFormat, row[8])
+		if err != nil {
+			return "", err
+		}
+
+		rec := Item{Name: row[0], Description: row[1], Amount: float32(amount), Unit: row[3],
+			Calories: uint16(calories), Category: row[5], Price: float32(price), Currency: row[7], Expiration: expiration}
+		if err := r.DB.Create(&rec); err.Error != nil {
+			return "", err.Error
+		}
+	}
+
+	return "", nil
+}
+
+// sortList sorts a list of records
+func (r *RecordDB) sortList(field, sort string, items *[]Item) *gorm.DB {
+	var res *gorm.DB
+	if sort == "asc" || sort == "desc" {
+		res = r.DB.Order(fmt.Sprintf("%s %s", field, sort)).Find(items)
+	} else {
+		res = r.DB.Order(field).Find(&items)
+	}
+
+	return res
+}
+
+// getItemList formats a list of items
+func (r *RecordDB) getItemList(items []Item) string {
+	var itemsList string
+	for _, item := range items {
+		itemsList += item.Name + "\n"
+	}
+
+	return itemsList
 }

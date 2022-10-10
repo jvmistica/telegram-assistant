@@ -13,6 +13,7 @@ var (
 	msg        tgbotapi.MessageConfig
 )
 
+// Listen listens to the messages send to the bot and sends the appropriate response
 func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) {
 	for update := range updates {
 		if update.Message == nil {
@@ -31,6 +32,7 @@ func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) 
 	}
 }
 
+// processMessage processes the message according to the commands and values provided
 func processMessage(prevMsg string, db *gorm.DB, chatID int64) tgbotapi.MessageConfig {
 	r := &RecordDB{DB: db}
 	if prevMsg == "/additem" {
