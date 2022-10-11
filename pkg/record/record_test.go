@@ -27,26 +27,31 @@ func SetupTests() *gorm.DB {
 func TestAdd(t *testing.T) {
 	db := SetupTests()
 	tests := []struct {
-		params   []string
+		name     string
 		expected string
 	}{
 		{
-			params:   []string{},
+			name:     "",
 			expected: addChoose,
 		},
 		{
-			params:   []string{"melon"},
+			name:     "melon",
 			expected: strings.ReplaceAll(addSuccess, itemTag, "melon"),
 		},
 		{
-			params:   []string{"coconut", "pie"},
+			name:     "coconut pie",
 			expected: strings.ReplaceAll(addSuccess, itemTag, "coconut pie"),
+		},
+		{
+			name:     "thai chicken curry",
+			expected: strings.ReplaceAll(addSuccess, itemTag, "thai chicken curry"),
 		},
 	}
 
 	r := &RecordDB{DB: db}
 	for _, tt := range tests {
-		actual, err := r.Add(tt.params)
+		params := strings.Split(tt.name, " ")
+		actual, err := r.Add(params)
 		assert.Nil(t, err)
 		assert.Equal(t, tt.expected, actual)
 	}

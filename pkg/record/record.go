@@ -26,7 +26,7 @@ type RecordDB struct {
 
 // Add inserts a new record into a table
 func (r *RecordDB) Add(params []string) (string, error) {
-	if len(params) == 0 {
+	if len(params) == 0 || params[0] == "" {
 		return addChoose, nil
 	}
 
