@@ -73,5 +73,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	record.Listen(updates, bot, db)
+
+	r := &record.RecordDB{DB: db}
+	r.Listen(updates, bot)
 }

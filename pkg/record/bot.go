@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"gorm.io/gorm"
 )
 
 var (
@@ -14,7 +13,7 @@ var (
 )
 
 // Listen listens to the messages send to the bot and sends the appropriate response
-func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) {
+func (r *RecordDB) Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI) {
 	for update := range updates {
 		if update.Message == nil {
 			continue
@@ -23,7 +22,7 @@ func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) 
 		// Read texts sent to the bot
 		if update.Message.Text != "" {
 			currentMsg = update.Message.Text
-			msg = processMessage(prevMsg, db, update.Message.Chat.ID)
+			msg = r.processMessage(prevMsg, update.Message.Chat.ID)
 		}
 
 		prevMsg = currentMsg
@@ -33,8 +32,7 @@ func Listen(updates tgbotapi.UpdatesChannel, bot *tgbotapi.BotAPI, db *gorm.DB) 
 }
 
 // processMessage processes the message according to the commands and values provided
-func processMessage(prevMsg string, db *gorm.DB, chatID int64) tgbotapi.MessageConfig {
-	r := &RecordDB{DB: db}
+func (r *RecordDB) processMessage(prevMsg string, chatID int64) tgbotapi.MessageConfig {
 	if prevMsg == "/additem" {
 		result, err := r.Add([]string{currentMsg})
 		if err != nil {
