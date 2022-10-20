@@ -15,7 +15,7 @@ const (
 	fieldTag = "<field>"
 )
 
-func SetupTests() *gorm.DB {
+func setupTestDB() *gorm.DB {
 	mocket.Catcher.Register()
 	db, _ := gorm.Open(postgres.New(postgres.Config{
 		DriverName: mocket.DriverName,
@@ -25,13 +25,17 @@ func SetupTests() *gorm.DB {
 }
 
 func TestAdd(t *testing.T) {
-	db := SetupTests()
+	db := setupTestDB()
 	tests := []struct {
 		name     string
 		expected string
 	}{
 		{
 			name:     "",
+			expected: addChoose,
+		},
+		{
+			name:     " ",
 			expected: addChoose,
 		},
 		{
@@ -58,46 +62,51 @@ func TestAdd(t *testing.T) {
 }
 
 func TestShow(t *testing.T) {
-	db := SetupTests()
+	db := setupTestDB()
 	r := &RecordDB{DB: db}
 
-	t.Run("no items", func(t *testing.T) {
-		mocket.Catcher.Reset().NewMock().WithReply(nil)
-		actual, err := r.Show([]string{"milk"})
-		assert.Nil(t, err)
-		assert.Equal(t, strings.ReplaceAll(itemNotExist, itemTag, "milk"), actual)
-	})
+	tests := map[string]struct {
+		name     string
+		record   []map[string]interface{}
+		expected string
+	}{
+		"no record": {
+			name:     "milk",
+			record:   nil,
+			expected: strings.ReplaceAll(itemNotExist, itemTag, "milk"),
+		},
+		"no category": {
+			name: "egg",
+			record: []map[string]interface{}{{"name": "egg", "description": "Super tasty and cheap", "amount": 12, "unit": "piece(s)",
+				"price": 98.50, "currency": "PHP", "expiration": time.Date(2021, 2, 26, 20, 34, 58, 651387237, time.UTC)}},
+			expected: "*egg* (_Uncategorized_)\n\nSuper tasty and cheap\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26",
+		},
+		"no description": {
+			name: "chocolate",
+			record: []map[string]interface{}{{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
+				"currency": "PHP", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)}},
+			expected: "*chocolate* (snack)\n\n_No description_\nAmount: 5.00 bar(s)\nPrice: 44.50 PHP\nExpiration: 2022/03/29",
+		},
+		"no expiration": {
+			name: "strawberry milk",
+			record: []map[string]interface{}{{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
+				"category": "fruit", "price": 98.10, "currency": "PHP"}},
+			expected: "*strawberry milk* (fruit)\n\nFruity\nAmount: 2.00 cup(s)\nPrice: 98.10 PHP\nExpiration: _Not set_",
+		},
+	}
 
-	t.Run("no category", func(t *testing.T) {
-		records := []map[string]interface{}{{"name": "egg", "description": "Super tasty and cheap", "amount": 12, "unit": "piece(s)",
-			"price": 98.50, "currency": "PHP", "expiration": time.Date(2021, 2, 26, 20, 34, 58, 651387237, time.UTC)}}
-		mocket.Catcher.Reset().NewMock().WithReply(records)
-		actual, err := r.Show([]string{"egg"})
-		assert.Nil(t, err)
-		assert.Equal(t, "*egg* (_Uncategorized_)\n\nSuper tasty and cheap\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
-	})
-
-	t.Run("no description", func(t *testing.T) {
-		records := []map[string]interface{}{{"name": "egg", "amount": 12, "unit": "piece(s)", "category": "protein", "price": 98.50,
-			"currency": "PHP", "expiration": time.Date(2021, 2, 26, 20, 34, 58, 651387237, time.UTC)}}
-		mocket.Catcher.Reset().NewMock().WithReply(records)
-		actual, err := r.Show([]string{"egg"})
-		assert.Nil(t, err)
-		assert.Equal(t, "*egg* (protein)\n\n_No description_\nAmount: 12.00 piece(s)\nPrice: 98.50 PHP\nExpiration: 2021/02/26", actual)
-	})
-
-	t.Run("no expiration", func(t *testing.T) {
-		records := []map[string]interface{}{{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
-			"category": "fruit", "price": 98.10, "currency": "PHP"}}
-		mocket.Catcher.Reset().NewMock().WithReply(records)
-		actual, err := r.Show([]string{"egg"})
-		assert.Nil(t, err)
-		assert.Equal(t, "*strawberry milk* (fruit)\n\nFruity\nAmount: 2.00 cup(s)\nPrice: 98.10 PHP\nExpiration: _Not set_", actual)
-	})
+	for testName, tt := range tests {
+		t.Run(testName, func(t *testing.T) {
+			mocket.Catcher.Reset().NewMock().WithReply(tt.record)
+			actual, err := r.Show([]string{tt.name})
+			assert.Nil(t, err)
+			assert.Equal(t, tt.expected, actual)
+		})
+	}
 }
 
 func TestList(t *testing.T) {
-	db := SetupTests()
+	db := setupTestDB()
 	r := &RecordDB{DB: db}
 
 	t.Run("invalid arguments", func(t *testing.T) {
@@ -111,7 +120,7 @@ func TestList(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	db := SetupTests()
+	db := setupTestDB()
 	r := &RecordDB{DB: db}
 
 	tests := []struct {
@@ -185,7 +194,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	db := SetupTests()
+	db := setupTestDB()
 	r := &RecordDB{DB: db}
 
 	tests := []struct {
