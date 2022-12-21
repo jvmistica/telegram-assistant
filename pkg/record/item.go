@@ -94,13 +94,12 @@ func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 
 	if len(cmd) == 4 && strings.Join(cmd[:2], " ") == "sort by" {
 		res = r.sortList(cmd[2], cmd[3], &items)
+		if res.RowsAffected == 0 {
+			return noItems, nil
+		}
 	}
 
-	if res.RowsAffected == 0 {
-		return noItems, nil
-	}
-
-	if len(cmd) == 5 && strings.Join(cmd[:2], " ") == "filter by" {
+	if len(cmd) > 4 && strings.Join(cmd[:2], " ") == "filter by" {
 		res = r.DB.Where(fmt.Sprintf("%s %s '%s'", cmd[2], cmd[3], strings.Join(cmd[4:], " "))).Find(&items)
 		if res.RowsAffected == 0 {
 			return noMatchFilter, nil

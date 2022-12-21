@@ -98,7 +98,8 @@ func TestShow(t *testing.T) {
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
 			mocket.Catcher.Reset().NewMock().WithReply(tt.record)
-			actual, err := r.Show([]string{tt.name})
+			params := strings.Split(tt.name, " ")
+			actual, err := r.Show(params)
 			assert.Nil(t, err)
 			assert.Equal(t, tt.expected, actual)
 		})
@@ -116,6 +117,32 @@ func TestList(t *testing.T) {
 			assert.Nil(t, err)
 			assert.Equal(t, invalidListMsg, actual)
 		}
+	})
+
+	t.Run("no sort and no filter", func(t *testing.T) {
+		records := []map[string]interface{}{
+			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
+				"currency": "PHP", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+			{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
+				"category": "fruit", "price": 98.10, "currency": "PHP"},
+		}
+		mocket.Catcher.Reset().NewMock().WithReply(records)
+
+		actual, err := r.List([]string{})
+		assert.Nil(t, err)
+		assert.Equal(t, "chocolate\nstrawberry milk\n", actual)
+	})
+
+	t.Run("with filter", func(t *testing.T) {
+		records := []map[string]interface{}{
+			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
+				"currency": "PHP", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+		}
+		mocket.Catcher.Reset().NewMock().WithReply(records)
+
+		actual, err := r.List([]string{"filter", "by", "name", "=", "chocolate"})
+		assert.Nil(t, err)
+		assert.Equal(t, "chocolate\n", actual)
 	})
 }
 
