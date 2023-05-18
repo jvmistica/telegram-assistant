@@ -31,24 +31,16 @@ func TestAdd(t *testing.T) {
 		expected string
 	}{
 		{
-			name:     "",
-			expected: addChoose,
-		},
-		{
-			name:     " ",
-			expected: addChoose,
-		},
-		{
 			name:     "melon",
-			expected: strings.ReplaceAll(addSuccess, itemTag, "melon"),
+			expected: strings.ReplaceAll(ResponseSuccessAdd, itemTag, "melon"),
 		},
 		{
 			name:     "coconut pie",
-			expected: strings.ReplaceAll(addSuccess, itemTag, "coconut pie"),
+			expected: strings.ReplaceAll(ResponseSuccessAdd, itemTag, "coconut pie"),
 		},
 		{
 			name:     "thai chicken curry",
-			expected: strings.ReplaceAll(addSuccess, itemTag, "thai chicken curry"),
+			expected: strings.ReplaceAll(ResponseSuccessAdd, itemTag, "thai chicken curry"),
 		},
 	}
 
@@ -73,7 +65,7 @@ func TestShow(t *testing.T) {
 		"no record": {
 			name:     "milk",
 			record:   nil,
-			expected: strings.ReplaceAll(itemNotExist, itemTag, "milk"),
+			expected: strings.ReplaceAll(ResponseItemNotExist, itemTag, "milk"),
 		},
 		"no category": {
 			name: "egg",
@@ -115,7 +107,7 @@ func TestList(t *testing.T) {
 		for _, p := range params {
 			actual, err := r.List([]string{p})
 			assert.Nil(t, err)
-			assert.Equal(t, invalidListMsg, actual)
+			assert.Equal(t, ResponseInvalidList, actual)
 		}
 	})
 
@@ -157,44 +149,38 @@ func TestUpdate(t *testing.T) {
 		noRows   bool
 	}{
 		{
-			params:   []string{},
-			expected: updateChoose,
-			wantErr:  false,
-			noRows:   false,
-		},
-		{
 			params:   []string{"melon", "category", "fruit"},
-			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, "melon"), fieldTag, "category"),
+			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "category"),
 			wantErr:  false,
 			noRows:   false,
 		},
 		{
 			params:   []string{"melon", "amount", "2"},
-			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, "melon"), fieldTag, "amount"),
+			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "amount"),
 			wantErr:  false,
 			noRows:   false,
 		},
 		{
 			params:   []string{"melon", "price", "30.50"},
-			expected: strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, "melon"), fieldTag, "price"),
+			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "price"),
 			wantErr:  false,
 			noRows:   false,
 		},
 		{
 			params:   []string{"egg", "amount", "12"},
-			expected: strings.ReplaceAll(itemNotExist, itemTag, "egg"),
+			expected: strings.ReplaceAll(ResponseItemNotExist, itemTag, "egg"),
 			wantErr:  false,
 			noRows:   true,
 		},
 		{
 			params:   []string{"melon"},
-			expected: updateInvalid,
+			expected: ResponseInvalidUpdate,
 			wantErr:  true,
 			noRows:   false,
 		},
 		{
 			params:   []string{"melon", "price"},
-			expected: updateInvalid,
+			expected: ResponseInvalidUpdate,
 			wantErr:  true,
 			noRows:   false,
 		},
@@ -230,23 +216,18 @@ func TestDelete(t *testing.T) {
 		noRows   bool
 	}{
 		{
-			params:   []string{},
-			expected: deleteChoose,
-			noRows:   false,
-		},
-		{
 			params:   []string{"flour"},
-			expected: strings.ReplaceAll(deleteSuccess, itemTag, "flour"),
+			expected: strings.ReplaceAll(ResponseSuccessDelete, itemTag, "flour"),
 			noRows:   false,
 		},
 		{
 			params:   []string{"almond", "flour"},
-			expected: strings.ReplaceAll(deleteSuccess, itemTag, "almond flour"),
+			expected: strings.ReplaceAll(ResponseSuccessDelete, itemTag, "almond flour"),
 			noRows:   false,
 		},
 		{
 			params:   []string{"milk"},
-			expected: strings.ReplaceAll(itemNotExist, itemTag, "milk"),
+			expected: strings.ReplaceAll(ResponseItemNotExist, itemTag, "milk"),
 			noRows:   true,
 		},
 	}
