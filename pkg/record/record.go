@@ -43,7 +43,7 @@ func (r *RecordDB) Add(params []string) (string, error) {
 // Show returns the details of a specific record
 func (r *RecordDB) Show(params []string) (string, error) {
 	if len(params) == 0 || params[0] == "" {
-		return addChoose, nil
+		return showChoose, nil
 	}
 
 	rec := strings.Join(params, " ")

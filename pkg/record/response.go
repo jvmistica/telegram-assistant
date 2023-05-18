@@ -37,6 +37,8 @@ var (
 		"/updateitem _itemName_ price _itemPrice_ _currency_\n" +
 		"/updateitem _itemName_ expiration _itemExpiration_\n"
 
+	showChoose = "Which item do you want to see?"
+
 	deleteChoose  = "Which item do you want to delete?"
 	deleteSuccess = "Removed \"<item>\" from the inventory."
 
