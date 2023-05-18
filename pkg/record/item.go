@@ -1,6 +1,7 @@
 package record
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -14,6 +15,11 @@ const (
 	filterByName      = "name = ?"
 	itemTag           = "<item>"
 )
+
+// RecordDB contains the database instance used for record transactions
+type RecordDB struct {
+	DB *gorm.DB
+}
 
 // Item is the model used for item-specific records
 type Item struct {
@@ -31,31 +37,42 @@ type Item struct {
 	UpdatedAt   time.Time
 }
 
-// AddRecord inserts a new record into the "item" table
-func (r *RecordDB) AddRecord(record string) error {
-	rec := Item{Name: record}
-	err := r.DB.Create(&rec)
-	if err.Error != nil {
-		return err.Error
+// Add inserts a new record into a table
+func (r *RecordDB) Add(params []string) (string, error) {
+	if len(params) == 0 || params[0] == "" {
+		return addChoose, nil
 	}
 
-	return nil
+	item := strings.Join(params, " ")
+	rec := Item{Name: item}
+	err := r.DB.Create(&rec)
+	if err.Error != nil {
+		return "", err.Error
+	}
+
+	msg := strings.ReplaceAll(addSuccess, itemTag, item)
+	return msg, nil
 }
 
-// ShowRecord returns the details of a specific "item" record
-func (r *RecordDB) ShowRecord(record string) (string, error) {
+// Show returns the details of a specific record
+func (r *RecordDB) Show(params []string) (string, error) {
+	if len(params) == 0 || params[0] == "" {
+		return showChoose, nil
+	}
+
+	rec := strings.Join(params, " ")
 	var (
 		item    Item
 		details string
 	)
 
-	res := r.DB.Where(filterByName, record).Find(&item)
+	res := r.DB.Where(filterByName, rec).Find(&item)
 	if res.Error != nil {
 		return "", res.Error
 	}
 
 	if res.RowsAffected == 0 {
-		return strings.ReplaceAll(itemNotExist, itemTag, record), nil
+		return strings.ReplaceAll(itemNotExist, itemTag, rec), nil
 	}
 
 	category := "_Uncategorized_"
@@ -109,6 +126,105 @@ func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	return r.getItemList(items), nil
 }
 
+// List returns a list of records from a table
+func (r *RecordDB) List(params []string) (string, error) {
+	var (
+		msg string
+		err error
+	)
+
+	if len(params) == 0 || params[0] == "" {
+		msg, err = r.ListRecords([]string{})
+		if err != nil {
+			return "", err
+		}
+		return msg, nil
+	}
+
+	msg, err = r.ListRecords(params)
+	if err != nil {
+		return "", err
+	}
+
+	return msg, nil
+}
+
+// Update updates a specific record
+func (r *RecordDB) Update(params []string) (string, error) {
+	if len(params) == 0 {
+		return updateChoose, nil
+	}
+
+	if len(params) < 3 {
+		return "", errors.New(updateInvalid)
+	}
+
+	msg, err := r.UpdateRecord(params)
+	if err != nil {
+		return "", err
+	}
+
+	return msg, nil
+}
+
+// Delete deletes a specific record
+func (r *RecordDB) Delete(params []string) (string, error) {
+	if len(params) == 0 {
+		return deleteChoose, nil
+	}
+
+	rec := strings.Join(params, " ")
+	res := r.DB.Where(filterByName, rec).Delete(Item{})
+	if res.RowsAffected == 0 {
+		return strings.ReplaceAll(itemNotExist, itemTag, rec), nil
+	}
+
+	return strings.ReplaceAll(deleteSuccess, itemTag, rec), nil
+}
+
+// Import imports a list of records into a table
+func (r *RecordDB) Import(records [][]string) (string, error) {
+	if _, err := r.ImportRecords(records); err != nil {
+		return "", err
+	}
+
+	msg := "Successfully imported items."
+	return msg, nil
+}
+
+// ImportRecords imports a list of records into the "item" table
+func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
+	for _, row := range records {
+		amount, err := strconv.ParseFloat(row[2], 32)
+		if err != nil {
+			return "", err
+		}
+
+		calories, err := strconv.Atoi(row[4])
+		if err != nil {
+			return "", err
+		}
+
+		price, err := strconv.ParseFloat(row[6], 32)
+		if err != nil {
+			return "", err
+		}
+
+		expiration, err := time.Parse(defaultTimeFormat, row[8])
+		if err != nil {
+			return "", err
+		}
+
+		rec := Item{Name: row[0], Description: row[1], Amount: float32(amount), Unit: row[3],
+			Calories: uint16(calories), Category: row[5], Price: float32(price), Currency: row[7], Expiration: expiration}
+		if err := r.DB.Create(&rec); err.Error != nil {
+			return "", err.Error
+		}
+	}
+
+	return "", nil
+}
+
 // UpdateRecord updates a specific "item" record
 func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	var res *gorm.DB
@@ -146,49 +262,6 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	}
 
 	return strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, params[0]), "<field>", params[1]), nil
-}
-
-// DeleteRecord deletes a specific "item" record
-func (r *RecordDB) DeleteRecord(record string) (int64, error) {
-	res := r.DB.Where(filterByName, record).Delete(Item{})
-	if res.Error != nil {
-		return 0, res.Error
-	}
-
-	return res.RowsAffected, nil
-}
-
-// ImportRecords imports a list of records into the "item" table
-func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
-	for _, row := range records {
-		amount, err := strconv.ParseFloat(row[2], 32)
-		if err != nil {
-			return "", err
-		}
-
-		calories, err := strconv.Atoi(row[4])
-		if err != nil {
-			return "", err
-		}
-
-		price, err := strconv.ParseFloat(row[6], 32)
-		if err != nil {
-			return "", err
-		}
-
-		expiration, err := time.Parse(defaultTimeFormat, row[8])
-		if err != nil {
-			return "", err
-		}
-
-		rec := Item{Name: row[0], Description: row[1], Amount: float32(amount), Unit: row[3],
-			Calories: uint16(calories), Category: row[5], Price: float32(price), Currency: row[7], Expiration: expiration}
-		if err := r.DB.Create(&rec); err.Error != nil {
-			return "", err.Error
-		}
-	}
-
-	return "", nil
 }
 
 // sortList sorts a list of records
