@@ -6,38 +6,30 @@ import (
 
 // CheckCommand checks if the command is valid and
 // returns the appropriate response
-func (r *RecordDB) CheckCommand(cmd string) (string, error) {
-	var (
-		msg    string
-		err    error
-		params []string
-	)
-
-	if len(strings.Split(cmd, " ")) > 1 {
-		params = strings.Split(cmd, " ")[1:]
-		cmd = strings.Split(cmd, " ")[0]
-	}
+func (r *RecordDB) CheckCommand(data string) (string, error) {
+	cmd, params := checkParams(data)
 
 	switch cmd {
 	case "/start":
-		msg = startMsg
+		return startMsg, nil
 	case "/listitems":
-		msg, err = r.List(params)
+		return r.List(params)
 	case "/showitem":
-		msg, err = r.Show(params)
+		return r.Show(params)
 	case "/additem":
-		msg, err = r.Add(params)
+		return r.Add(params)
 	case "/updateitem":
-		msg, err = r.Update(params)
+		return r.Update(params)
 	case "/deleteitem":
-		msg, err = r.Delete(params)
+		return r.Delete(params)
 	default:
-		msg = invalidMsg
+		// add end case
+		// check for previous command
+		return invalidMsg, nil
 	}
+}
 
-	if err != nil {
-		return "", err
-	}
-
-	return msg, nil
+func checkParams(data string) (string, []string) {
+	splitData := strings.Split(data, " ")
+	return splitData[0], splitData[1:]
 }
