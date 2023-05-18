@@ -41,6 +41,14 @@ func (r *RecordDB) processMessage(prevMsg string, chatID int64) tgbotapi.Message
 		return tgbotapi.NewMessage(chatID, result)
 	}
 
+	if prevMsg == "/showitem" {
+		result, err := r.Show([]string{currentMsg})
+		if err != nil {
+			return tgbotapi.NewMessage(chatID, fmt.Sprintf("%s", err))
+		}
+		return tgbotapi.NewMessage(chatID, result)
+	}
+
 	if prevMsg == "/deleteitem" {
 		result, err := r.Delete([]string{currentMsg})
 		if err != nil {
