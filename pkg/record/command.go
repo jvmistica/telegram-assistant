@@ -4,14 +4,25 @@ import (
 	"strings"
 )
 
+// defaultResponse contains default responses when parameters are not given
+var defaultResponse map[string]string = map[string]string{
+	"/start":      ResponseStart,
+	"/showitem":   ResponseShow,
+	"/additem":    ResponseAdd,
+	"/updateitem": ResponseUpdate,
+	"/deleteitem": ResponseDelete,
+}
+
 // CheckCommand checks if the command is valid and
 // returns the appropriate response
 func (r *RecordDB) CheckCommand(data string) (string, error) {
+	if defaultResponse[data] != "" {
+		return defaultResponse[data], nil
+	}
+
 	cmd, params := checkParams(data)
 
 	switch cmd {
-	case "/start":
-		return startMsg, nil
 	case "/listitems":
 		return r.List(params)
 	case "/showitem":
@@ -23,9 +34,7 @@ func (r *RecordDB) CheckCommand(data string) (string, error) {
 	case "/deleteitem":
 		return r.Delete(params)
 	default:
-		// add end case
-		// check for previous command
-		return invalidMsg, nil
+		return ResponseInvalid, nil
 	}
 }
 

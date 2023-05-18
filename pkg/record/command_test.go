@@ -20,7 +20,7 @@ func TestCommand(t *testing.T) {
 	}{
 		{
 			data:             "/start",
-			expectedResponse: startMsg,
+			expectedResponse: ResponseStart,
 		},
 		{
 			data:             "/listitems",
@@ -28,19 +28,19 @@ func TestCommand(t *testing.T) {
 		},
 		{
 			data:             "/showitem",
-			expectedResponse: showChoose,
+			expectedResponse: ResponseShow,
 		},
 		{
 			data:             "/additem",
-			expectedResponse: addChoose,
+			expectedResponse: ResponseAdd,
 		},
 		{
 			data:             "/updateitem",
-			expectedResponse: updateChoose,
+			expectedResponse: ResponseUpdate,
 		},
 		{
 			data:             "/deleteitem",
-			expectedResponse: deleteChoose,
+			expectedResponse: ResponseDelete,
 		},
 	}
 

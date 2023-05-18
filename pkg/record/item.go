@@ -39,27 +39,19 @@ type Item struct {
 
 // Add inserts a new record into a table
 func (r *RecordDB) Add(params []string) (string, error) {
-	if len(params) == 0 || params[0] == "" {
-		return addChoose, nil
-	}
-
 	item := strings.Join(params, " ")
-	rec := Item{Name: item}
-	err := r.DB.Create(&rec)
+	record := Item{Name: item}
+	err := r.DB.Create(&record)
 	if err.Error != nil {
 		return "", err.Error
 	}
 
-	msg := strings.ReplaceAll(addSuccess, itemTag, item)
+	msg := strings.ReplaceAll(ResponseSuccessAdd, itemTag, item)
 	return msg, nil
 }
 
 // Show returns the details of a specific record
 func (r *RecordDB) Show(params []string) (string, error) {
-	if len(params) == 0 || params[0] == "" {
-		return showChoose, nil
-	}
-
 	rec := strings.Join(params, " ")
 	var (
 		item    Item
@@ -72,7 +64,7 @@ func (r *RecordDB) Show(params []string) (string, error) {
 	}
 
 	if res.RowsAffected == 0 {
-		return strings.ReplaceAll(itemNotExist, itemTag, rec), nil
+		return strings.ReplaceAll(ResponseItemNotExist, itemTag, rec), nil
 	}
 
 	category := "_Uncategorized_"
@@ -100,7 +92,7 @@ func (r *RecordDB) Show(params []string) (string, error) {
 // ListRecords returns a list of records from the "item" table
 func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	if len(cmd) != 0 && len(cmd) != 4 && len(cmd) != 5 {
-		return invalidListMsg, nil
+		return ResponseInvalidList, nil
 	}
 
 	var items []Item
@@ -112,14 +104,14 @@ func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	if len(cmd) == 4 && strings.Join(cmd[:2], " ") == "sort by" {
 		res = r.sortList(cmd[2], cmd[3], &items)
 		if res.RowsAffected == 0 {
-			return noItems, nil
+			return ResponseNoItems, nil
 		}
 	}
 
 	if len(cmd) > 4 && strings.Join(cmd[:2], " ") == "filter by" {
 		res = r.DB.Where(fmt.Sprintf("%s %s '%s'", cmd[2], cmd[3], strings.Join(cmd[4:], " "))).Find(&items)
 		if res.RowsAffected == 0 {
-			return noMatchFilter, nil
+			return ResponseNoMatchFilter, nil
 		}
 	}
 
@@ -151,12 +143,8 @@ func (r *RecordDB) List(params []string) (string, error) {
 
 // Update updates a specific record
 func (r *RecordDB) Update(params []string) (string, error) {
-	if len(params) == 0 {
-		return updateChoose, nil
-	}
-
 	if len(params) < 3 {
-		return "", errors.New(updateInvalid)
+		return "", errors.New(ResponseInvalidUpdate)
 	}
 
 	msg, err := r.UpdateRecord(params)
@@ -169,17 +157,13 @@ func (r *RecordDB) Update(params []string) (string, error) {
 
 // Delete deletes a specific record
 func (r *RecordDB) Delete(params []string) (string, error) {
-	if len(params) == 0 {
-		return deleteChoose, nil
-	}
-
 	rec := strings.Join(params, " ")
 	res := r.DB.Where(filterByName, rec).Delete(Item{})
 	if res.RowsAffected == 0 {
-		return strings.ReplaceAll(itemNotExist, itemTag, rec), nil
+		return strings.ReplaceAll(ResponseItemNotExist, itemTag, rec), nil
 	}
 
-	return strings.ReplaceAll(deleteSuccess, itemTag, rec), nil
+	return strings.ReplaceAll(ResponseSuccessDelete, itemTag, rec), nil
 }
 
 // Import imports a list of records into a table
@@ -258,10 +242,10 @@ func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	}
 
 	if res.RowsAffected == 0 {
-		return strings.ReplaceAll(itemNotExist, itemTag, params[0]), nil
+		return strings.ReplaceAll(ResponseItemNotExist, itemTag, params[0]), nil
 	}
 
-	return strings.ReplaceAll(strings.ReplaceAll(updateSuccess, itemTag, params[0]), "<field>", params[1]), nil
+	return strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, params[0]), "<field>", params[1]), nil
 }
 
 // sortList sorts a list of records
