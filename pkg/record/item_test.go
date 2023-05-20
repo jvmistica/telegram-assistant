@@ -123,6 +123,27 @@ func TestList(t *testing.T) {
 		}
 	})
 
+	t.Run("no records", func(t *testing.T) {
+		mocket.Catcher.Reset().NewMock().WithRowsNum(0)
+		actual, err := r.List([]string{})
+		assert.Nil(t, err)
+		assert.Equal(t, ResponseNoItems, actual)
+	})
+
+	t.Run("no records with sort", func(t *testing.T) {
+		mocket.Catcher.Reset().NewMock().WithRowsNum(0)
+		actual, err := r.List([]string{"sort", "by", "name", "desc"})
+		assert.Nil(t, err)
+		assert.Equal(t, ResponseNoItems, actual)
+	})
+
+	t.Run("no records with filter", func(t *testing.T) {
+		mocket.Catcher.Reset().NewMock().WithRowsNum(0)
+		actual, err := r.List([]string{"filter", "by", "name", "=", "melon"})
+		assert.Nil(t, err)
+		assert.Equal(t, ResponseNoMatchFilter, actual)
+	})
+
 	t.Run("no sort and no filter", func(t *testing.T) {
 		records := []map[string]interface{}{
 			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
@@ -135,6 +156,34 @@ func TestList(t *testing.T) {
 		actual, err := r.List([]string{})
 		assert.Nil(t, err)
 		assert.Equal(t, "chocolate\nstrawberry milk\n", actual)
+	})
+
+	t.Run("with sort no order given", func(t *testing.T) {
+		records := []map[string]interface{}{
+			{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
+				"category": "fruit", "price": 98.10, "currency": "EUR"},
+			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
+				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+		}
+		mocket.Catcher.Reset().NewMock().WithReply(records)
+
+		actual, err := r.List([]string{"sort", "by", "price"})
+		assert.Nil(t, err)
+		assert.Equal(t, "strawberry milk\nchocolate\n", actual)
+	})
+
+	t.Run("with sort", func(t *testing.T) {
+		records := []map[string]interface{}{
+			{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
+				"category": "fruit", "price": 98.10, "currency": "EUR"},
+			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
+				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+		}
+		mocket.Catcher.Reset().NewMock().WithReply(records)
+
+		actual, err := r.List([]string{"sort", "by", "price", "desc"})
+		assert.Nil(t, err)
+		assert.Equal(t, "strawberry milk\nchocolate\n", actual)
 	})
 
 	t.Run("with filter", func(t *testing.T) {
@@ -163,38 +212,43 @@ func TestUpdate(t *testing.T) {
 		{
 			params:   []string{"melon", "category", "fruit"},
 			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "category"),
-			wantErr:  false,
-			noRows:   false,
 		},
 		{
-			params:   []string{"melon", "amount", "2"},
+			params:   []string{"hot chocolate", "description", "hot and sweet"},
+			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "hot chocolate"), fieldTag, "description"),
+		},
+		{
+			params:   []string{"melon", "amount", "2", "pieces"},
 			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "amount"),
-			wantErr:  false,
-			noRows:   false,
 		},
 		{
-			params:   []string{"melon", "price", "30.50"},
+			params:   []string{"melon", "price", "30.50", "EUR"},
 			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "price"),
-			wantErr:  false,
-			noRows:   false,
+		},
+		{
+			params:   []string{"melon", "price", "abc", "EUR"},
+			expected: "strconv.ParseFloat: parsing \"abc\": invalid syntax",
+			wantErr:  true,
+		},
+		{
+			params:   []string{"egg", "amount", "abc", "pieces"},
+			expected: "strconv.ParseFloat: parsing \"abc\": invalid syntax",
+			wantErr:  true,
 		},
 		{
 			params:   []string{"egg", "amount", "12"},
 			expected: strings.ReplaceAll(ResponseItemNotExist, itemTag, "egg"),
-			wantErr:  false,
 			noRows:   true,
 		},
 		{
 			params:   []string{"melon"},
 			expected: ResponseInvalidUpdate,
 			wantErr:  true,
-			noRows:   false,
 		},
 		{
 			params:   []string{"melon", "price"},
 			expected: ResponseInvalidUpdate,
 			wantErr:  true,
-			noRows:   false,
 		},
 	}
 

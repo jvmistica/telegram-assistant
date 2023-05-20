@@ -92,7 +92,7 @@ func (r *RecordDB) Show(params []string) (string, error) {
 
 // ListRecords returns a list of records from the "item" table
 func (r *RecordDB) ListRecords(cmd []string) (string, error) {
-	if len(cmd) != 0 && len(cmd) != 4 && len(cmd) != 5 {
+	if len(cmd) != 0 && len(cmd) < 3 {
 		return ResponseInvalidList, nil
 	}
 
@@ -100,10 +100,18 @@ func (r *RecordDB) ListRecords(cmd []string) (string, error) {
 	var res *gorm.DB
 	if len(cmd) == 0 {
 		res = r.DB.Find(&items)
+		if res.RowsAffected == 0 {
+			return ResponseNoItems, nil
+		}
 	}
 
-	if len(cmd) == 4 && strings.Join(cmd[:2], " ") == "sort by" {
-		res = r.sortList(cmd[2], cmd[3], &items)
+	if len(cmd) > 2 && strings.Join(cmd[:2], " ") == "sort by" {
+		sort := ""
+		if len(cmd) > 3 {
+			sort = cmd[3]
+		}
+
+		res = r.sortList(cmd[2], sort, &items)
 		if res.RowsAffected == 0 {
 			return ResponseNoItems, nil
 		}
@@ -213,25 +221,35 @@ func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
 // UpdateRecord updates a specific "item" record
 func (r *RecordDB) UpdateRecord(params []string) (string, error) {
 	var res *gorm.DB
-	if params[1] == "amount" && len(params) > 3 {
+	if params[1] == "amount" && len(params) > 2 {
 		f, err := strconv.ParseFloat(params[2], 32)
 		if err != nil {
 			return "", err
 		}
 
-		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Amount: float32(f), Unit: params[3]})
+		unit := ""
+		if len(params) > 3 {
+			unit = params[3]
+		}
+
+		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Amount: float32(f), Unit: unit})
 		if res.Error != nil {
 			return "", res.Error
 		}
 	}
 
-	if params[1] == "price" && len(params) > 3 {
+	if params[1] == "price" && len(params) > 2 {
 		f, err := strconv.ParseFloat(params[2], 32)
 		if err != nil {
 			return "", err
 		}
 
-		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Price: float32(f), Currency: params[3]})
+		currency := ""
+		if len(params) > 3 {
+			currency = params[3]
+		}
+
+		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Price: float32(f), Currency: currency})
 		if res.Error != nil {
 			return "", res.Error
 		}
