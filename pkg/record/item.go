@@ -42,7 +42,7 @@ type Item struct {
 // Add inserts a new record into a table
 func (r *RecordDB) Add(params []string) (string, error) {
 	item := strings.Join(params, " ")
-	record := Item{Name: item, Currency: "EUR"}
+	record := Item{Name: item, Currency: defaultCurrency}
 	err := r.DB.Create(&record)
 	if err.Error != nil {
 		return "", err.Error
