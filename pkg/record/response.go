@@ -32,9 +32,9 @@ var (
 		"Update this item's details using the commands below:\n" +
 		"/updateitem _itemName_ description _itemDescription_\n" +
 		"/updateitem _itemName_ calories _calories_\n" +
-		"/updateitem _itemName_ amount _itemAmount_ _unit_\n" +
+		"/updateitem _itemName_ amount _itemAmount_\n" +
 		"/updateitem _itemName_ category _itemCategory_\n" +
-		"/updateitem _itemName_ price _itemPrice_ _currency_\n" +
+		"/updateitem _itemName_ price _itemPrice_\n" +
 		"/updateitem _itemName_ expiration _itemExpiration_\n"
 
 	ResponseShow = "Which item do you want to see?"
@@ -48,9 +48,9 @@ var (
 		"*Update DB*\n" +
 		"/updateitem _itemName_ description _itemDescription_\n" +
 		"/updateitem _itemName_ calories _calories_\n" +
-		"/updateitem _itemName_ amount _itemAmount_ _unit_\n" +
+		"/updateitem _itemName_ amount _itemAmount_\n" +
 		"/updateitem _itemName_ category _itemCategory_\n" +
-		"/updateitem _itemName_ price _itemPrice_ _currency_\n" +
+		"/updateitem _itemName_ price _itemPrice_\n" +
 		"/updateitem _itemName_ expiration _itemExpiration_\n"
 
 	ResponseItemNotExist  = "Item \"<item>\" does not exist in the inventory."
