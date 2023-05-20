@@ -70,31 +70,31 @@ func TestShow(t *testing.T) {
 		"no description": {
 			name: "chocolate",
 			record: []map[string]interface{}{{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
-				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)}},
+				"currency": defaultCurrency, "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)}},
 			expected: "*chocolate* (snack)\n\n_No description_\nAmount: 5.00 bar(s)\nPrice: 44.50 EUR\nExpiration: 2022/03/29",
 		},
 		"no category": {
 			name: "egg",
 			record: []map[string]interface{}{{"name": "egg", "description": "Super tasty and cheap", "amount": 12, "unit": "piece(s)",
-				"price": 98.50, "currency": "EUR", "expiration": time.Date(2021, 2, 26, 20, 34, 58, 651387237, time.UTC)}},
+				"price": 98.50, "currency": defaultCurrency, "expiration": time.Date(2021, 2, 26, 20, 34, 58, 651387237, time.UTC)}},
 			expected: "*egg* (_Uncategorized_)\n\nSuper tasty and cheap\nAmount: 12.00 piece(s)\nPrice: 98.50 EUR\nExpiration: 2021/02/26",
 		},
 		"no amount": {
 			name: "chocolate",
 			record: []map[string]interface{}{{"name": "chocolate", "unit": "bar(s)", "category": "snack", "price": 44.50,
-				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)}},
+				"currency": defaultCurrency, "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)}},
 			expected: "*chocolate* (snack)\n\n_No description_\nAmount: 0.00 bar(s)\nPrice: 44.50 EUR\nExpiration: 2022/03/29",
 		},
 		"no price": {
 			name: "strawberry milk",
-			record: []map[string]interface{}{{"name": "strawberry milk", "description": "Fruity", "amount": 2, "currency": "EUR", "unit": "cup(s)",
+			record: []map[string]interface{}{{"name": "strawberry milk", "description": "Fruity", "amount": 2, "currency": defaultCurrency, "unit": "cup(s)",
 				"category": "fruit", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)}},
 			expected: "*strawberry milk* (fruit)\n\nFruity\nAmount: 2.00 cup(s)\nPrice: 0.00 EUR\nExpiration: 2022/03/29",
 		},
 		"no expiration": {
 			name: "strawberry milk",
 			record: []map[string]interface{}{{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
-				"category": "fruit", "price": 98.10, "currency": "EUR"}},
+				"category": "fruit", "price": 98.10, "currency": defaultCurrency}},
 			expected: "*strawberry milk* (fruit)\n\nFruity\nAmount: 2.00 cup(s)\nPrice: 98.10 EUR\nExpiration: _Not set_",
 		},
 	}
@@ -147,9 +147,9 @@ func TestList(t *testing.T) {
 	t.Run("no sort and no filter", func(t *testing.T) {
 		records := []map[string]interface{}{
 			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
-				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+				"currency": defaultCurrency, "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
 			{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
-				"category": "fruit", "price": 98.10, "currency": "EUR"},
+				"category": "fruit", "price": 98.10, "currency": defaultCurrency},
 		}
 		mocket.Catcher.Reset().NewMock().WithReply(records)
 
@@ -161,9 +161,9 @@ func TestList(t *testing.T) {
 	t.Run("with sort no order given", func(t *testing.T) {
 		records := []map[string]interface{}{
 			{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
-				"category": "fruit", "price": 98.10, "currency": "EUR"},
+				"category": "fruit", "price": 98.10, "currency": defaultCurrency},
 			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
-				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+				"currency": defaultCurrency, "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
 		}
 		mocket.Catcher.Reset().NewMock().WithReply(records)
 
@@ -175,9 +175,9 @@ func TestList(t *testing.T) {
 	t.Run("with sort", func(t *testing.T) {
 		records := []map[string]interface{}{
 			{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
-				"category": "fruit", "price": 98.10, "currency": "EUR"},
+				"category": "fruit", "price": 98.10, "currency": defaultCurrency},
 			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
-				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+				"currency": defaultCurrency, "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
 		}
 		mocket.Catcher.Reset().NewMock().WithReply(records)
 
@@ -189,7 +189,7 @@ func TestList(t *testing.T) {
 	t.Run("with filter", func(t *testing.T) {
 		records := []map[string]interface{}{
 			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50,
-				"currency": "EUR", "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
+				"currency": defaultCurrency, "expiration": time.Date(2022, 3, 29, 20, 34, 58, 651387237, time.UTC)},
 		}
 		mocket.Catcher.Reset().NewMock().WithReply(records)
 
@@ -222,11 +222,11 @@ func TestUpdate(t *testing.T) {
 			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "amount"),
 		},
 		{
-			params:   []string{"melon", "price", "30.50", "EUR"},
+			params:   []string{"melon", "price", "30.50", defaultCurrency},
 			expected: strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, "melon"), fieldTag, "price"),
 		},
 		{
-			params:   []string{"melon", "price", "abc", "EUR"},
+			params:   []string{"melon", "price", "abc", defaultCurrency},
 			expected: "strconv.ParseFloat: parsing \"abc\": invalid syntax",
 			wantErr:  true,
 		},

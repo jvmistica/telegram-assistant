@@ -12,6 +12,7 @@ import (
 
 const (
 	defaultTimeFormat = "2006/01/02"
+	defaultUnit       = "piece(s)"
 	defaultCurrency   = "EUR"
 	filterByName      = "name = ?"
 	itemTag           = "<item>"
@@ -41,7 +42,7 @@ type Item struct {
 // Add inserts a new record into a table
 func (r *RecordDB) Add(params []string) (string, error) {
 	item := strings.Join(params, " ")
-	record := Item{Name: item, Currency: "EUR"}
+	record := Item{Name: item, Currency: defaultCurrency}
 	err := r.DB.Create(&record)
 	if err.Error != nil {
 		return "", err.Error
@@ -220,51 +221,62 @@ func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
 
 // UpdateRecord updates a specific "item" record
 func (r *RecordDB) UpdateRecord(params []string) (string, error) {
-	var res *gorm.DB
-	if params[1] == "amount" && len(params) > 2 {
-		f, err := strconv.ParseFloat(params[2], 32)
-		if err != nil {
-			return "", err
-		}
+	var (
+		res   *gorm.DB
+		item  string
+		field string
+		value string
+	)
 
-		unit := ""
-		if len(params) > 3 {
-			unit = params[3]
-		}
+	keys := []string{"description", "amount", "unit", "calories", "category", "price", "currency", "expiration"}
+	for i, param := range params {
+		for _, key := range keys {
+			if param == key {
+				item = strings.Join(params[:i], " ")
+				field = param
+				value = strings.Join(params[i+1:], " ")
+			}
 
-		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Amount: float32(f), Unit: unit})
-		if res.Error != nil {
-			return "", res.Error
+			if param == "amount" {
+				field = param
+				value = params[i+1]
+				f, err := strconv.ParseFloat(params[i+1], 32)
+				if err != nil {
+					return "", err
+				}
+
+				res = r.DB.Model(&Item{}).Where(filterByName, item).Updates(Item{Amount: float32(f), Unit: defaultUnit})
+				if res.Error != nil {
+					return "", res.Error
+				}
+			}
+
+			if param == "price" {
+				field = param
+				value = params[i+1]
+				f, err := strconv.ParseFloat(params[i+1], 32)
+				if err != nil {
+					return "", err
+				}
+
+				res = r.DB.Model(&Item{}).Where(filterByName, item).Updates(Item{Price: float32(f), Currency: defaultCurrency})
+				if res.Error != nil {
+					return "", res.Error
+				}
+			}
 		}
 	}
 
-	if params[1] == "price" && len(params) > 2 {
-		f, err := strconv.ParseFloat(params[2], 32)
-		if err != nil {
-			return "", err
-		}
-
-		currency := ""
-		if len(params) > 3 {
-			currency = params[3]
-		}
-
-		res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Updates(Item{Price: float32(f), Currency: currency})
-		if res.Error != nil {
-			return "", res.Error
-		}
-	}
-
-	res = r.DB.Model(&Item{}).Where(filterByName, params[0]).Update(params[1], strings.Join(params[2:], " "))
+	res = r.DB.Model(&Item{}).Where(filterByName, item).Update(field, value)
 	if res.Error != nil {
 		return "", res.Error
 	}
 
 	if res.RowsAffected == 0 {
-		return strings.ReplaceAll(ResponseItemNotExist, itemTag, params[0]), nil
+		return strings.ReplaceAll(ResponseItemNotExist, itemTag, item), nil
 	}
 
-	return strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, params[0]), "<field>", params[1]), nil
+	return strings.ReplaceAll(strings.ReplaceAll(ResponseSuccessUpdate, itemTag, item), "<field>", field), nil
 }
 
 // sortList sorts a list of records

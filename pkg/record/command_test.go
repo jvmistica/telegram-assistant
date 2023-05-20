@@ -14,7 +14,7 @@ func TestCommand(t *testing.T) {
 
 	t.Run("default response", func(t *testing.T) {
 		record := []map[string]interface{}{{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
-			"category": "fruit", "price": 98.10, "currency": "EUR"}}
+			"category": "fruit", "price": 98.10, "currency": defaultCurrency}}
 		mocket.Catcher.Reset().NewMock().WithReply(record)
 
 		tests := []struct {
@@ -61,8 +61,8 @@ func TestCommand(t *testing.T) {
 	t.Run("with params response", func(t *testing.T) {
 		record := []map[string]interface{}{
 			{"name": "strawberry milk", "description": "Fruity", "amount": 2, "unit": "cup(s)",
-				"category": "fruit", "price": 98.10, "currency": "EUR"},
-			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50, "currency": "EUR"}}
+				"category": "fruit", "price": 98.10, "currency": defaultCurrency},
+			{"name": "chocolate", "amount": 5, "unit": "bar(s)", "category": "snack", "price": 44.50, "currency": defaultCurrency}}
 		mocket.Catcher.Reset().NewMock().WithReply(record)
 
 		tests := []struct {
