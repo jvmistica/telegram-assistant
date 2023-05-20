@@ -42,6 +42,10 @@ func TestCommand(t *testing.T) {
 			data:             "/deleteitem",
 			expectedResponse: ResponseDelete,
 		},
+		{
+			data:             "random string",
+			expectedResponse: ResponseInvalid,
+		},
 	}
 
 	for _, tt := range tests {

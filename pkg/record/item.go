@@ -12,6 +12,7 @@ import (
 
 const (
 	defaultTimeFormat = "2006/01/02"
+	defaultCurrency   = "EUR"
 	filterByName      = "name = ?"
 	itemTag           = "<item>"
 )
@@ -40,7 +41,7 @@ type Item struct {
 // Add inserts a new record into a table
 func (r *RecordDB) Add(params []string) (string, error) {
 	item := strings.Join(params, " ")
-	record := Item{Name: item}
+	record := Item{Name: item, Currency: "EUR"}
 	err := r.DB.Create(&record)
 	if err.Error != nil {
 		return "", err.Error
