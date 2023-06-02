@@ -10,7 +10,8 @@ var (
 		"/showitem - show an item's details\n" +
 		"/additem - add an item\n" +
 		"/updateitem - update an item\n" +
-		"/deleteitem - delete an item\n"
+		"/deleteitem - delete an item\n" +
+		"/importitems - import items from a CSV file\n"
 
 	ResponseInvalid = "That's not a valid command. Here's a list of valid commands:\n\n" +
 		listItems +
@@ -56,4 +57,6 @@ var (
 	ResponseItemNotExist  = "Item \"<item>\" does not exist in the inventory."
 	ResponseNoMatchFilter = "There are no items matching that filter."
 	ResponseNoItems       = "There are no items in your inventory."
+
+	ResponseImport = "Please attach the CSV file."
 )
