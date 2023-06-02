@@ -6,11 +6,12 @@ import (
 
 // defaultResponse contains default responses when parameters are not given
 var defaultResponse map[string]string = map[string]string{
-	"/start":      ResponseStart,
-	"/showitem":   ResponseShow,
-	"/additem":    ResponseAdd,
-	"/updateitem": ResponseUpdate,
-	"/deleteitem": ResponseDelete,
+	"/start":       ResponseStart,
+	"/showitem":    ResponseShow,
+	"/additem":     ResponseAdd,
+	"/updateitem":  ResponseUpdate,
+	"/deleteitem":  ResponseDelete,
+	"/importitems": ResponseImport,
 }
 
 // CheckCommand checks if the command is valid and

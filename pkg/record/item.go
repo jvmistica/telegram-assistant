@@ -188,29 +188,14 @@ func (r *RecordDB) Import(records [][]string) (string, error) {
 
 // ImportRecords imports a list of records into the "item" table
 func (r *RecordDB) ImportRecords(records [][]string) (string, error) {
-	for _, row := range records {
-		amount, err := strconv.ParseFloat(row[2], 32)
+	for i := 1; i < len(records); i++ {
+		row := records[i]
+		price, err := strconv.ParseFloat(row[2], 32)
 		if err != nil {
 			return "", err
 		}
 
-		calories, err := strconv.Atoi(row[4])
-		if err != nil {
-			return "", err
-		}
-
-		price, err := strconv.ParseFloat(row[6], 32)
-		if err != nil {
-			return "", err
-		}
-
-		expiration, err := time.Parse(defaultTimeFormat, row[8])
-		if err != nil {
-			return "", err
-		}
-
-		rec := Item{Name: row[0], Description: row[1], Amount: float32(amount), Unit: row[3],
-			Calories: uint16(calories), Category: row[5], Price: float32(price), Currency: row[7], Expiration: expiration}
+		rec := Item{Name: row[0], Description: row[1], Price: float32(price)}
 		if err := r.DB.Create(&rec); err.Error != nil {
 			return "", err.Error
 		}
