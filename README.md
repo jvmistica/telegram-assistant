@@ -24,8 +24,13 @@ export BOT_TOKEN=<telegram-bot-token>
 /listitems sort by <field> asc        - List items in your inventory in ascending order  
 /listitems sort by <field> desc       - List items in your inventory in descending order  
 /listitems filter by <field> = <text> - List filtered items in your inventory (operations can be =, >, <, >=, <=, <>)  
+/showitem                             - Show prompt for entering the item to be shown  
 /showitem <item>                      - Show an item's details  
+/additem                              - Show prompt for entering the item to be added  
 /additem <item>                       - Add an item to your inventory  
+/updateitem                           - Show prompt for entering the item to be updated  
 /updateitem <item> <field> <value>    - Update an item in your inventory  
-/deleteitem <item>                    - Delete an item in your inventory  
+/deleteitem                           - Show prompt for entering the item to be deleted  
+/deleteitem <item>                    - Delete an item in your inventory    
+/importitems                          - Import records from a CSV file. 
 ```
