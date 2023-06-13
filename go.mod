@@ -1,4 +1,4 @@
-module github.com/jvmistica/henchmaid
+module github.com/jvmistica/telegram-assistant
 
 go 1.20
 
