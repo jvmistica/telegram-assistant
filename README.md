@@ -16,7 +16,7 @@ export POSTGRES_PASS=<password>
 export POSTGRES_DB=<postgres_db>
 export BOT_TOKEN=<telegram-bot-token>
 ```
-4. Run then server with `make run`
+4. Run the server with `make run`
 
 ## Commands
 ```
@@ -33,7 +33,7 @@ export BOT_TOKEN=<telegram-bot-token>
 /updateitem <item> <field> <value>    - Update an item in your inventory  
 /deleteitem                           - Show prompt for entering the item to be deleted  
 /deleteitem <item>                    - Delete an item in your inventory    
-/importitems                          - Import records from a CSV file. 
+/importitems                          - Import records from a CSV file 
 ```
 
 
