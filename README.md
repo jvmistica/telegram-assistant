@@ -2,6 +2,7 @@
 ![Build status](https://github.com/jvmistica/telegram-assistant/workflows/telegram-assistant/badge.svg)  
 A telegram bot that allows users to manage their inventory - items and recipes. Initially made to prevent food stored in the far reaches of my kitchen cabinet and fridge from going to waste.
 
+
 ## Running the Server Locally
 1. Install and run PostgreSQL
 2. Create a user, password, and database
@@ -34,3 +35,18 @@ export BOT_TOKEN=<telegram-bot-token>
 /deleteitem <item>                    - Delete an item in your inventory    
 /importitems                          - Import records from a CSV file. 
 ```
+
+
+## Usage
+Adding the bot to a chat for the first time will present you with a START button. Upon clicking it, the Menu button will become available and clicking it will show a list of commands accepted by the bot.
+![image](https://github.com/jvmistica/telegram-assistant/assets/53989745/82e36532-5c2e-4f89-84d6-df43a6889b42)  
+
+Listing and adding items  
+![image](https://github.com/jvmistica/telegram-assistant/assets/53989745/e40d1166-ac5a-4706-959e-f8cfcb299dde)  
+
+Updating and showing items  
+![image](https://github.com/jvmistica/telegram-assistant/assets/53989745/a7c0dc70-cffb-453b-b694-e3ca7f71e3c5)
+![image](https://github.com/jvmistica/telegram-assistant/assets/53989745/227a929f-4860-41a7-b8ba-724d8943a173)  
+
+Deleting items  
+![image](https://github.com/jvmistica/telegram-assistant/assets/53989745/1d87265e-bd5f-42cc-84b0-58f0f219fbc0) 
