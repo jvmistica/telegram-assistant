@@ -1,5 +1,5 @@
-# Henchmaid
-![Build status](https://github.com/jvmistica/henchmaid/workflows/henchmaid/badge.svg)  
+# telegram-assistant
+![Build status](https://github.com/jvmistica/telegram-assistant/workflows/telegram-assistant/badge.svg)  
 A telegram bot that allows users to manage their inventory - items and recipes. Initially made to prevent food stored in the far reaches of my kitchen cabinet and fridge from going to waste.
 
 ## Running the Server Locally
