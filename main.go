@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/jvmistica/henchmaid/pkg/record"
+	"github.com/jvmistica/telegram-assistant/pkg/record"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

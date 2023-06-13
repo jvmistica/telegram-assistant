@@ -1,4 +1,4 @@
-name: henchmaid
+name: telegram-assistant
 
 on:
   push:
