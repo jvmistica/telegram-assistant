@@ -27,9 +27,3 @@ jobs:
 
     - name: vulncheck
       run: make vulncheck
-
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONARTOKEN }}
