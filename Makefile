@@ -2,10 +2,9 @@ format:
 	@go fmt ./...
 
 test:
-	@go test -cover -v ./...
+	@go test ./... -coverprofile cover.out
 
 cover:
-	@go test ./... -coverprofile cover.out
 	@go tool cover -html cover.out -o cover.html
 
 run:
