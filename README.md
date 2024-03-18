@@ -1,5 +1,5 @@
 # telegram-assistant
-![Build status](https://github.com/jvmistica/telegram-assistant/workflows/telegram-assistant/badge.svg)
+![Build status](https://github.com/jvmistica/telegram-assistant/workflows/build/badge.svg)
 ![Coverage](https://img.shields.io/sonar/coverage/jvmistica_telegram-assistant/main?server=https%3A%2F%2Fsonarcloud.io)
 
 A telegram bot that allows users to manage their inventory - items and recipes. Initially made to prevent food stored in the far reaches of my kitchen cabinet and fridge from going to waste.
