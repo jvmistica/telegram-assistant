@@ -1,4 +1,4 @@
-name: telegram-assistant
+name: build
 
 on:
   push:
