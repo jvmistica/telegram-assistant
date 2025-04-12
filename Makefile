@@ -22,4 +22,4 @@ vulncheck:
 	@govulncheck ./...
 
 trivyscan:
-	@trivy fs . --scanners=vuln
+	@trivy fs . --scanners=vuln,secret,misconfig
