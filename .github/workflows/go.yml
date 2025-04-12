@@ -37,7 +37,7 @@ jobs:
         exit-code: 0
 
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
+      uses: SonarSource/sonarqube-scan-action@v5
       env:
         GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
         SONAR_TOKEN: ${{ secrets.SONARTOKEN }}
