@@ -1,3 +1,5 @@
+.PHONY: format test cover run build install vulncheck trivyscan
+
 format:
 	@go fmt ./...
 
@@ -18,3 +20,6 @@ install:
 
 vulncheck:
 	@govulncheck ./...
+
+trivyscan:
+	@trivy fs . --scanners=vuln
